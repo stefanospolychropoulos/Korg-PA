@@ -3,88 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
-    <title>Pa1000 AI Master</title>
-    <script src="https://cdn.jsdelivr.net/npm/@magenta/music@^1.0.0"></script>
+    <title>Korg Pa1000 AI Master</title>
     <style>
-        :root { --bg: #0f0f0f; --accent: #ff9800; --panel: #1a1a1a; --btn: #333; --blue: #1976d2; }
-        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        :root { --bg: #0f0f0f; --accent: #ff9800; --panel: #1a1a1a; --btn: #333; --blue: #1976d2; --green: #2e7d32; --red: #c62828; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
+        /* Navigation */
         .tab-bar { display: flex; background: #222; border-bottom: 2px solid var(--accent); }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; cursor: pointer; font-weight: bold; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #888; cursor: pointer; font-weight: bold; font-size: 12px; }
         .tab-btn.active { color: var(--accent); background: #2a2a2a; }
 
         .content { flex: 1; overflow-y: auto; padding: 10px; display: none; }
         .content.active { display: block; }
 
         .panel { background: var(--panel); border-radius: 10px; padding: 15px; margin-bottom: 10px; border: 1px solid #333; }
-        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        
-        button { background: var(--btn); border: none; color: white; padding: 15px 5px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
-        button:active { background: var(--accent); }
+        .grid { display: grid; gap: 8px; }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-5 { grid-template-columns: repeat(5, 1fr); }
+        .grid-8 { grid-template-columns: repeat(8, 1fr); }
 
-        /* Mixer Sliders */
-        .mixer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; }
-        .v-slider { appearance: slider-vertical; width: 35px; height: 140px; accent-color: var(--accent); }
-        .mute-btn { width: 100%; font-size: 9px; margin-top: 5px; }
-        .active-mute { background: #c62828; }
+        button { background: var(--btn); border: none; color: white; padding: 12px 5px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; transition: 0.1s; }
+        button:active { background: var(--accent) !important; transform: scale(0.95); }
+        .btn-main { height: 60px; font-size: 14px; }
 
-        /* AI & Quarter Tones */
+        /* Mixer Styling */
+        .mixer-container { overflow-x: auto; padding-bottom: 10px; }
+        .mixer-grid { display: grid; gap: 10px; text-align: center; }
+        .chan { display: flex; flex-direction: column; align-items: center; background: #252525; padding: 10px 5px; border-radius: 5px; }
+        .chan span { font-size: 10px; margin-bottom: 8px; color: #aaa; font-weight: bold; }
+        .v-slider { appearance: slider-vertical; width: 30px; height: 120px; accent-color: var(--accent); cursor: pointer; }
+        .mute-btn { width: 100%; font-size: 9px; margin-top: 8px; padding: 5px 0; }
+        .active-mute { background: var(--red) !important; }
+
+        /* Scales */
         .scale-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
-        .note-btn.detuned { background: var(--blue); }
+        .note-btn.detuned { background: var(--blue); border: 1px solid white; }
 
+        /* Footer Pitch */
         footer { background: #111; padding: 10px; border-top: 1px solid #333; }
-        .pitch-bar { width: 100%; height: 40px; accent-color: var(--accent); }
+        .pitch-bar { width: 100%; height: 35px; accent-color: var(--accent); }
     </style>
 </head>
 <body>
 
 <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('live')">LIVE</button>
-    <button class="tab-btn" onclick="showTab('mixer')">MIXER/SCALES</button>
-    <button class="tab-btn" onclick="showTab('songbook')">SONGBOOK</button>
+    <button class="tab-btn active" onclick="showTab('live')">LIVE CONTROL</button>
+    <button class="tab-btn" onclick="showTab('mixer')">MIXER / SCALES</button>
     <button class="tab-btn" onclick="showTab('ai')">AI CHORDS</button>
 </div>
 
 <div id="live" class="content active">
-    <div class="panel grid">
-        <button onclick="sendCC(80,0)">Intro 1</button><button onclick="sendCC(80,3)">Var 1</button>
-        <button onclick="sendCC(80,4)">Var 2</button><button onclick="sendCC(80,7)">Fill 1</button>
-        <button onclick="sendCC(80,12)">End 1</button><button onclick="sendCC(80,11)" style="background:#555">BREAK</button>
-        <button onclick="sendDirect(0xFA)" style="background:#2e7d32">START</button>
-        <button onclick="sendDirect(0xFC)" style="background:#c62828">STOP</button>
-    </div>
     <div class="panel">
-        <button onclick="panic()" style="width:100%; background:#c62828">PANIC / ALL NOTES OFF</button>
+        <div style="font-size:10px; color:var(--accent); margin-bottom:10px;">STYLE ELEMENTS</div>
+        
+        <div class="grid grid-4" style="margin-bottom:10px;">
+            <button onclick="sendCC(80,0)" style="background:#555">Intro 1</button>
+            <button onclick="sendCC(80,1)" style="background:#555">Intro 2</button>
+            <button onclick="sendCC(80,2)" style="background:#555">Intro 3</button>
+            <button onclick="sendCC(80,11)" style="background:var(--red)">BREAK</button>
+        </div>
+
+        <div class="grid grid-4" style="margin-bottom:10px;">
+            <button onclick="sendCC(80,3)" style="border-bottom: 3px solid var(--accent)">Var 1</button>
+            <button onclick="sendCC(80,4)" style="border-bottom: 3px solid var(--accent)">Var 2</button>
+            <button onclick="sendCC(80,5)" style="border-bottom: 3px solid var(--accent)">Var 3</button>
+            <button onclick="sendCC(80,6)" style="border-bottom: 3px solid var(--accent)">Var 4</button>
+        </div>
+
+        <div class="grid grid-4" style="margin-bottom:10px;">
+            <button onclick="sendCC(80,7)" style="background:var(--green)">Fill 1</button>
+            <button onclick="sendCC(80,8)" style="background:var(--green)">Fill 2</button>
+            <button onclick="sendCC(80,9)" style="background:var(--green)">Fill 3</button>
+            <button onclick="sendCC(80,10)" style="background:var(--green)">Fill 4</button>
+        </div>
+
+        <div class="grid grid-5" style="margin-bottom:10px;">
+            <button onclick="sendCC(81,0)" style="background:var(--blue)">Pad 1</button>
+            <button onclick="sendCC(81,1)" style="background:var(--blue)">Pad 2</button>
+            <button onclick="sendCC(81,2)" style="background:var(--blue)">Pad 3</button>
+            <button onclick="sendCC(81,3)" style="background:var(--blue)">Pad 4</button>
+            <button onclick="sendCC(81,4)" style="background:#444">P.Stop</button>
+        </div>
+
+        <div class="grid grid-4">
+            <button onclick="sendCC(80,12)" style="background:#555">End 1</button>
+            <button onclick="sendCC(80,13)" style="background:#555">End 2</button>
+            <button onclick="sendCC(80,14)" style="background:#555">End 3</button>
+            <button onclick="panic()" style="background:#444">PANIC</button>
+        </div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 2fr; gap:10px;">
+        <button onclick="sendDirect(0xFC)" class="btn-main" style="background:var(--red)">STOP</button>
+        <button onclick="sendDirect(0xFA)" class="btn-main" style="background:var(--green)">START / PLAY</button>
     </div>
 </div>
 
 <div id="mixer" class="content">
-    <div class="panel mixer-grid">
-        <div class="chan"><span>UP1</span><br><input type="range" class="v-slider" oninput="setVol(0,this.value)"><button class="mute-btn" onclick="toggleMute(0,this)">MUTE</button></div>
-        <div class="chan"><span>UP2</span><br><input type="range" class="v-slider" oninput="setVol(1,this.value)"><button class="mute-btn" onclick="toggleMute(1,this)">MUTE</button></div>
-        <div class="chan"><span>UP3</span><br><input type="range" class="v-slider" oninput="setVol(2,this.value)"><button class="mute-btn" onclick="toggleMute(2,this)">MUTE</button></div>
-        <div class="chan"><span>BACK</span><br><input type="range" class="v-slider" oninput="setVol(8,this.value)"><button class="mute-btn" onclick="toggleMute(8,this)">MUTE</button></div>
-    </div>
     <div class="panel">
-        <div style="font-size:10px; margin-bottom:10px;">QUARTER TONES (MORYA)</div>
-        <div class="scale-grid" id="scaleGrid"></div>
-        <button onclick="resetScale()" style="width:100%; margin-top:10px;">RESET SCALE</button>
+        <div style="font-size:10px; color:var(--accent); margin-bottom:10px;">KEYBOARD & MAIN</div>
+        <div class="grid grid-4 text-center">
+            <div class="chan"><span>UP1</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(0,this.value)"><button class="mute-btn" onclick="toggleMute(0,this)">MUTE</button></div>
+            <div class="chan"><span>UP2</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(1,this.value)"><button class="mute-btn" onclick="toggleMute(1,this)">MUTE</button></div>
+            <div class="chan"><span>UP3</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(2,this.value)"><button class="mute-btn" onclick="toggleMute(2,this)">MUTE</button></div>
+            <div class="chan"><span>STYLE</span><input type="range" class="v-slider" min="0" max="127" value="90" oninput="sendCC(39,this.value)"><button class="mute-btn" onclick="sendCC(39,0)">MUTE</button></div>
+        </div>
     </div>
-</div>
 
-<div id="songbook" class="content">
-    <input type="file" id="fileIn" style="display:none" onchange="importSB(event)">
-    <button onclick="document.getElementById('fileIn').click()" style="width:100%; background:var(--blue)">IMPORT MYSONGS.TXT</button>
-    <input type="text" id="search" placeholder="Αναζήτηση..." onkeyup="filterSB()" style="width:100%; padding:10px; margin:10px 0; background:#222; border:1px solid #444; color:white;">
-    <div id="sbList" style="display:flex; flex-direction:column; gap:5px;"></div>
+    <div class="panel">
+        <div style="font-size:10px; color:var(--accent); margin-bottom:10px;">BACKING TRACKS (9-16)</div>
+        <div class="mixer-container">
+            <div class="grid grid-8" style="min-width:600px;">
+                <div class="chan"><span>DRUM</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(8,this.value)"><button class="mute-btn" onclick="toggleMute(8,this)">M</button></div>
+                <div class="chan"><span>PERC</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(9,this.value)"><button class="mute-btn" onclick="toggleMute(9,this)">M</button></div>
+                <div class="chan"><span>BASS</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(10,this.value)"><button class="mute-btn" onclick="toggleMute(10,this)">M</button></div>
+                <div class="chan"><span>ACC1</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(11,this.value)"><button class="mute-btn" onclick="toggleMute(11,this)">M</button></div>
+                <div class="chan"><span>ACC2</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(12,this.value)"><button class="mute-btn" onclick="toggleMute(12,this)">M</button></div>
+                <div class="chan"><span>ACC3</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(13,this.value)"><button class="mute-btn" onclick="toggleMute(13,this)">M</button></div>
+                <div class="chan"><span>ACC4</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(14,this.value)"><button class="mute-btn" onclick="toggleMute(14,this)">M</button></div>
+                <div class="chan"><span>ACC5</span><input type="range" class="v-slider" min="0" max="127" value="100" oninput="setVol(15,this.value)"><button class="mute-btn" onclick="toggleMute(15,this)">M</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="scale-grid" id="scaleGrid"></div>
+        <button onclick="resetScale()" style="width:100%; margin-top:10px; background:#444">RESET SCALE</button>
+    </div>
 </div>
 
 <div id="ai" class="content">
     <div class="panel">
-        <h3>AI Suggestion Engine</h3>
-        <p id="aiStatus" style="font-size:11px; color:var(--accent);">Αναμονή για μελωδία...</p>
-        <div id="chordSugs" class="grid"></div>
+        <div id="aiStatus" style="color:var(--accent); font-weight:bold; margin-bottom:10px;">AI: Listening for melody...</div>
+        <div id="chordSugs" class="grid grid-4"></div>
     </div>
 </div>
 
@@ -94,35 +147,31 @@
 
 <script>
 let midiOut = null;
-let songs = [];
 let detunedNotes = new Array(12).fill(false);
 
-navigator.requestMIDIAccess({sysex:true}).then(a => {
-    midiOut = Array.from(a.outputs.values())[0];
-    a.inputs.forEach(i => i.onmidimessage = handleInput);
+// MIDI Init
+navigator.requestMIDIAccess({sysex:true}).then(access => {
+    const outputs = Array.from(access.outputs.values());
+    midiOut = outputs[0];
+    access.inputs.forEach(input => input.onmidimessage = handleMIDIInput);
 });
 
-function handleInput(m) {
-    let [s, n, v] = m.data;
-    if(s >= 0x90 && s <= 0x92 && v > 0) analyzeAI(n % 12);
-}
-
-function sendCC(c,v) { if(midiOut) midiOut.send([0xB0,c,v]); }
-function sendDirect(b) { if(midiOut) midiOut.send([b]); }
-function setVol(ch,v) { if(midiOut) midiOut.send([0xB0+ch, 7, v]); }
-function sPitch(v) { if(midiOut) midiOut.send([0xE0, v&0x7F, (v>>7)&0x7F]); }
+function sendCC(cc, val) { if(midiOut) midiOut.send([0xB0, cc, val]); }
+function sendDirect(byte) { if(midiOut) midiOut.send([byte]); }
+function setVol(chan, val) { if(midiOut) midiOut.send([0xB0 + chan, 7, val]); }
+function sPitch(v) { if(midiOut) midiOut.send([0xE0, v & 0x7F, (v >> 7) & 0x7F]); }
 function rPitch() { document.getElementById('pBar').value=8192; sPitch(8192); }
 
-function toggleMute(ch,btn) {
+function toggleMute(chan, btn) {
     let active = btn.classList.toggle('active-mute');
-    midiOut.send([0xB0+ch, 11, active ? 0 : 127]);
+    midiOut.send([0xB0 + chan, 11, active ? 0 : 127]);
 }
 
-// SCALE LOGIC
+// Scale Logic
 const notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const grid = document.getElementById('scaleGrid');
+const sGrid = document.getElementById('scaleGrid');
 notes.forEach((n,i) => {
-    grid.innerHTML += `<button id="n${i}" onclick="tScale(${i})" class="note-btn">${n}</button>`;
+    sGrid.innerHTML += `<button id="n${i}" onclick="tScale(${i})" class="note-btn">${n}</button>`;
 });
 
 function tScale(i) {
@@ -132,43 +181,42 @@ function tScale(i) {
     midiOut.send(sysex);
 }
 
-function resetScale() { 
-    detunedNotes.fill(false); 
-    notes.forEach((n,i)=>{
+function resetScale() {
+    detunedNotes.fill(false);
+    notes.forEach((n,i) => {
         document.getElementById('n'+i).classList.remove('detuned');
         midiOut.send([0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x08, i, 64, 0xF7]);
     });
 }
 
-// SONGBOOK LOGIC
-function importSB(e) {
-    const r = new FileReader();
-    r.onload = (ev) => {
-        songs = ev.target.result.split('\n').slice(4).map(l => {
-            let p = l.split('\t');
-            if(p.length<2) return null;
-            let id = parseInt(p[0]);
-            return {id, name:p[1], pc:id%128, lsb:Math.floor(id/128)};
-        }).filter(s=>s);
-        renderSB(songs);
+// AI Analysis (Simple Harmony Tracker)
+function handleMIDIInput(m) {
+    let [status, note, vel] = m.data;
+    if(status >= 0x90 && status <= 0x92 && vel > 0) {
+        let n = note % 12;
+        document.getElementById('aiStatus').innerText = "AI Tracked: " + notes[n];
+        updateAI(n);
+    }
+}
+
+function updateAI(n) {
+    const suggestions = {
+        9: ["Dm", "E7", "F", "G"], // Am
+        2: ["Gm", "A7", "Bb", "C"], // Dm
+        0: ["Fm", "G", "Ab", "Bb"]  // Cm
     };
-    r.readAsText(e.target.files[0]);
+    let sugs = suggestions[n] || ["Am", "Dm", "G", "C"];
+    document.getElementById('chordSugs').innerHTML = sugs.map(s => `<button style="background:var(--blue)">${s}</button>`).join('');
 }
-function renderSB(list) {
-    document.getElementById('sbList').innerHTML = list.map(s => `
-        <button onclick="selS(${s.pc},${s.lsb})" style="text-align:left; padding:10px;">${s.name}</button>
-    `).join('');
-}
-function selS(p,l) { sendCC(0,0); sendCC(32,l); sendDirect(0xC0|p); }
 
 function showTab(id) {
-    document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     event.currentTarget.classList.add('active');
 }
 
-function panic() { for(let i=0;i<16;i++) sendCC(123,0); }
+function panic() { for(let i=0; i<16; i++) sendCC(123, 0); }
 </script>
 </body>
 </html>
