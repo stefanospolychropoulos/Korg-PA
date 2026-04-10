@@ -2,161 +2,99 @@
 <html lang="el">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TITAN Pa1000 v47 - FULL EXPRESSION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TITAN Pa5X PRESTIGE v62</title>
     <style>
-        :root { --bg: #000; --accent: #00f2ff; --red: #ff1744; --orange: #ffab40; --panel: #0d0d0d; --btn: #1a1a1a; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; outline: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        :root { --bg: #000; --accent: #00f2ff; --gold: #d4af37; --panel: #0f0f0f; --dark-btn: #1a1a1a; }
+        * { box-sizing: border-box; touch-action: none; user-select: none; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .status-bar { height: 4dvh; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; font-size: 10px; color: #555; background: #050505; border-bottom: 1px solid #222; }
-        #midi-led { width: 10px; height: 10px; border-radius: 50%; background: #200; box-shadow: 0 0 5px #000; }
+        /* Header */
+        .header { height: 4dvh; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; background: #000; border-bottom: 1px solid #333; font-size: 9px; color: var(--gold); font-weight: bold; }
         
-        .nav { height: 8dvh; display: flex; background: #050505; border-bottom: 1px solid #222; }
-        .tab { flex: 1; border: none; background: none; color: #444; font-weight: 900; font-size: 11px; text-transform: uppercase; }
-        .tab.active { color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); background: #0a0a0a; }
+        /* MIXER STRIPS (The Pa5X Sliders) */
+        .mixer-section { height: 25dvh; display: flex; gap: 2px; padding: 5px; background: #050505; }
+        .strip { flex: 1; display: flex; flex-direction: column; align-items: center; background: var(--panel); border-radius: 4px; border: 1px solid #222; }
+        .strip-label { font-size: 6px; color: #666; margin-top: 4px; }
+        .strip-slider { appearance: none; width: 80px; height: 20px; transform: rotate(-90deg) translateY(0); margin-top: 45px; background: transparent; }
+        .strip-slider::-webkit-slider-thumb { appearance: none; width: 12px; height: 24px; background: var(--gold); border-radius: 2px; }
 
-        .main { flex: 1; padding: 10px; display: flex; gap: 10px; overflow: hidden; }
-        .view { display: none; flex: 1; flex-direction: column; gap: 8px; }
-        .view.active { display: flex; }
-        
-        /* EXPRESSION SLIDER (VERTICAL) */
-        .exp-container { width: 60px; background: var(--panel); border: 1px solid #222; border-radius: 12px; display: flex; flex-direction: column; align-items: center; padding: 10px 0; }
-        .exp-slider { appearance: none; width: 180px; height: 40px; background: transparent; transform: rotate(-90deg) translateY(-0px); margin-top: 80px; cursor: pointer; }
-        .exp-slider::-webkit-slider-thumb { appearance: none; width: 40px; height: 60px; background: var(--accent); border-radius: 5px; box-shadow: 0 0 15px var(--accent); }
-        .exp-label { font-size: 8px; color: var(--accent); font-weight: 900; margin-top: auto; }
+        /* THE MATRIX (Pa5X Grid) */
+        .matrix-container { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 8px; }
+        .p5-btn { background: var(--dark-btn); border: 1px solid #333; color: #aaa; border-radius: 4px; font-size: 8px; font-weight: 900; }
+        .p5-btn.active { border-color: var(--accent); color: var(--accent); background: #001a1a; }
 
-        .card { background: var(--panel); border: 1px solid #1a1a1a; border-radius: 12px; padding: 10px; }
-        .label { font-size: 9px; color: #555; text-transform: uppercase; margin-bottom: 5px; font-weight: 900; }
-        
-        .grid { display: grid; gap: 6px; }
-        .g4 { grid-template-columns: repeat(4, 1fr); }
-        .g2 { grid-template-columns: repeat(2, 1fr); }
-        
-        button { background: var(--btn); border: 1px solid #333; color: #fff; padding: 15px 2px; border-radius: 8px; font-weight: bold; font-size: 10px; }
-        button:active { background: var(--accent) !important; color: #000 !important; }
-        
-        .btn-pad { background: #0a0a0a; border: 1px solid var(--orange); color: var(--orange); height: 50px; }
-        .n-act { background: var(--accent) !important; color: #000; border:none; }
-        
-        select { background: #111; color: var(--accent); border: 1px solid #333; padding: 12px; border-radius: 10px; width: 100%; font-size: 14px; font-weight: bold; appearance: none; }
-        
-        .footer { height: 18dvh; background: #000; border-top: 1px solid #333; padding: 10px; display: flex; align-items: center; }
-        .pb-container { position: relative; flex: 1; height: 70px; background: #0a0a0a; border-radius: 15px; border: 1px solid #222; display: flex; align-items: center; justify-content: center; }
-        #pb-slider { width: 100%; height: 100%; appearance: none; background: transparent; z-index: 10; }
-        #pb-slider::-webkit-slider-thumb { appearance: none; width: 90px; height: 70px; background: var(--accent); border-radius: 10px; }
-        .pb-text { position: absolute; font-size: 10px; font-weight: 900; color: #222; z-index: 1; pointer-events: none; }
+        /* THE CHORD LOOPER & X-FADER */
+        .control-row { height: 12dvh; display: flex; gap: 8px; padding: 5px 10px; align-items: center; background: #080808; }
+        .looper-box { display: flex; flex-direction: column; gap: 2px; }
+        .xfader-container { flex: 1; position: relative; }
+        #xfader { width: 100%; height: 30px; appearance: none; background: #111; border: 1px solid #333; border-radius: 15px; }
+        #xfader::-webkit-slider-thumb { appearance: none; width: 40px; height: 30px; background: var(--platinum); border-radius: 15px; border: 2px solid var(--accent); }
+
+        /* Footer */
+        .footer { height: 12dvh; display: flex; gap: 10px; padding: 5px 10px; border-top: 1px solid #222; }
+        .pb-area { flex: 1; background: #000; border-radius: 8px; border: 1px solid #444; position: relative; }
+        #pb { width: 100%; height: 100%; appearance: none; background: transparent; }
+        #pb::-webkit-slider-thumb { appearance: none; width: 60px; height: 45px; background: var(--accent); border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div class="status-bar">
-    <div><span id="midi-led"></span> MIDI EXPRESSION READY</div>
+<div class="header">
+    <div>TITAN Pa5X PRESTIGE v62</div>
     <div id="clock">00:00:00</div>
-    <div id="bat">--%</div>
 </div>
 
-<div class="nav">
-    <button class="tab active" onclick="tab('live', this)">ENGINE</button>
-    <button class="tab" onclick="tab('scale', this)">MAKAM</button>
-    <button class="tab" onclick="tab('auto', this)">SONGBOOK</button>
+<div class="mixer-section">
+    <div class="strip"><span class="strip-label">DRUM</span><input type="range" class="strip-slider" oninput="mCC(9, this.value)"></div>
+    <div class="strip"><span class="strip-label">BASS</span><input type="range" class="strip-slider" oninput="mCC(10, this.value)"></div>
+    <div class="strip"><span class="strip-label">ACC1</span><input type="range" class="strip-slider" oninput="mCC(11, this.value)"></div>
+    <div class="strip"><span class="strip-label">ACC2</span><input type="range" class="strip-slider" oninput="mCC(12, this.value)"></div>
+    <div class="strip" style="border-color:var(--gold)"><span class="strip-label">UP1</span><input type="range" class="strip-slider" oninput="mCC(7, this.value)"></div>
+    <div class="strip" style="border-color:var(--gold)"><span class="strip-label">UP2</span><input type="range" class="strip-slider" oninput="mCC(13, this.value)"></div>
+    <div class="strip" style="border-color:var(--gold)"><span class="strip-label">UP3</span><input type="range" class="strip-slider" oninput="mCC(14, this.value)"></div>
 </div>
 
-<div class="main">
-    <div class="exp-container" id="exp-fader">
-        <input type="range" class="exp-slider" min="0" max="127" value="127" oninput="mCC(11, this.value)">
-        <div class="exp-label">EXPRESSION</div>
+<div class="control-row">
+    <div class="looper-box">
+        <button style="color:red; font-size:7px" onclick="mCC(80,90)">● REC</button>
+        <button style="color:var(--green); font-size:7px" onclick="mCC(80,91)">▶ PLAY</button>
     </div>
+    <div class="xfader-container">
+        <input type="range" id="xfader" min="0" max="127" value="64" oninput="mCC(1, this.value)">
+        <div style="display:flex; justify-content:space-between; font-size:7px; color:#555; padding:0 10px;"><span>STYLE</span><span>KEYBOARD</span></div>
+    </div>
+</div>
 
-    <div id="live" class="view active">
-        <div class="card">
-            <span class="label">Pads</span>
-            <div class="grid g4">
-                <button class="btn-pad" ontouchstart="mCC(102,127)" ontouchend="mCC(102,0)">P1</button>
-                <button class="btn-pad" ontouchstart="mCC(103,127)" ontouchend="mCC(103,0)">P2</button>
-                <button class="btn-pad" ontouchstart="mCC(104,127)" ontouchend="mCC(104,0)">P3</button>
-                <button class="btn-pad" ontouchstart="mCC(105,127)" ontouchend="mCC(105,0)">P4</button>
-            </div>
-        </div>
-        <div class="card">
-            <span class="label">Style Control</span>
-            <div class="grid g4">
-                <button onclick="mCC(80,0)">IN1</button><button onclick="mCC(80,1)">IN2</button><button onclick="mCC(80,3)">V1</button><button onclick="mCC(80,4)">V2</button>
-                <button onclick="mCC(80,5)">V3</button><button onclick="mCC(80,6)">V4</button><button onclick="mCC(80,11)" style="color:var(--red)">BRK</button><button onclick="panic()" style="color:var(--red)">PANIC</button>
-            </div>
-        </div>
-        <div class="card grid g4">
-            <button ontouchstart="mCC(80,127)" ontouchend="mCC(80,0)">DNC1</button>
-            <button ontouchstart="mCC(81,127)" ontouchend="mCC(81,0)">DNC2</button>
-            <button ontouchstart="mCC(82,127)" ontouchend="mCC(82,0)">DNC3</button>
-            <button onclick="mCC(80,12)">END</button>
-        </div>
-    </div>
-
-    <div id="scale" class="view">
-        <div class="card"><select id="mkm_select">
-            <option value="none">-- NATURAL --</option>
-            <option value="rast">RAST</option><option value="ussak">USSAK</option><option value="hicaz">HICAZ</option>
-        </select></div>
-        <div class="card"><div id="sgrid" class="grid g4"></div></div>
-        <button onclick="resS()" style="color:var(--red)">RESET</button>
-    </div>
-
-    <div id="auto" class="view">
-        <div class="card grid g2">
-            <button onclick="mO.send([0xC0, 0])">001 - ΖΕΪΜΠΕΚΙΚΟ</button>
-            <button onclick="mO.send([0xC0, 1])">002 - ΤΣΙΦΤΕΤΕΛΙ</button>
-        </div>
-    </div>
+<div class="matrix-container">
+    <button class="p5-btn" onclick="mCC(80,20)">STS 1</button>
+    <button class="p5-btn" onclick="mCC(80,21)">STS 2</button>
+    <button class="p5-btn" onclick="mCC(80,22)">STS 3</button>
+    <button class="p5-btn" onclick="mCC(80,23)">STS 4</button>
+    
+    <button class="p5-btn active" id="m1" onclick="tM(80,80,'m1')">DRUM MUTE</button>
+    <button class="p5-btn active" id="m2" onclick="tM(80,81,'m2')">BASS MUTE</button>
+    <button class="p5-btn" id="m3" onclick="tM(80,82,'m3')">SST HOLD</button>
+    <button class="p5-btn" onclick="mCC(80,70)">FLAT ALL</button>
 </div>
 
 <div class="footer">
-    <div class="pb-container">
-        <div class="pb-text">PITCH BEND</div>
-        <input type="range" id="pb-slider" min="0" max="16383" value="8192" oninput="mPB(this.value)" ontouchend="resPB()">
+    <div class="pb-area">
+        <input type="range" id="pb" min="0" max="16383" value="8192" oninput="mPB(this.value)" ontouchend="rePB()">
+    </div>
+    <div style="width:80px; display:flex; flex-direction:column; gap:2px;">
+        <button style="flex:1; background:var(--green); color:black; font-weight:bold" onclick="mCC(80,15)">START</button>
+        <button style="flex:1; background:var(--red); color:black; font-weight:bold" onclick="mCC(80,16)">STOP</button>
     </div>
 </div>
 
 <script>
-let mO = null;
-const nts = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-
-navigator.requestMIDIAccess({sysex:true}).then(a => {
-    mO = Array.from(a.outputs.values())[0];
-    if(mO) document.getElementById('midi-led').style.background = '#00f2ff';
-});
-
-function mCC(c, v) { if(mO) mO.send([0xB0, c, v]); }
+let mO = null, mS = {};
+navigator.requestMIDIAccess().then(a => { mO = Array.from(a.outputs.values())[0]; });
+function mCC(c, v) { if(mO) mO.send([0xB0, c, v]); if(navigator.vibrate) navigator.vibrate(10); }
 function mPB(v) { if(mO) mO.send([0xE0, v & 0x7F, (v >> 7) & 0x7F]); }
-function resPB() { document.getElementById('pb-slider').value=8192; mPB(8192); }
-function panic() { for(let i=0; i<16; i++) if(mO) mO.send([0xB0+i, 123, 0]); }
-
-// MAKAM SYSTEM
-const mD = { "rast": [{idx:4, val:0x21}, {idx:11, val:0x21}], "ussak": [{idx:2, val:0x05}], "hicaz": [{idx:1, val:0x12}] };
-function applyMakam(bIdx) {
-    const t = document.getElementById('mkm_select').value;
-    resS(); if(t !== "none") mD[t].forEach(n => setT((bIdx + n.idx) % 12, true, n.val));
-}
-function setT(n, s, v) {
-    const b = document.getElementById('n'+n); if(b) b.classList.toggle('n-act', s);
-    if(mO) mO.send([0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x08, n, s ? v : 0x40, 0xF7]);
-}
-function resS() { for(let i=0; i<12; i++) setT(i, false); }
-
-const sg = document.getElementById('sgrid');
-nts.forEach((n, i) => {
-    const b = document.createElement('button'); b.id = 'n'+i; b.innerText = n;
-    b.onclick = () => applyMakam(i); sg.appendChild(b);
-});
-
-function tab(id, el) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(id).classList.add('active'); el.classList.add('active');
-    // Hide expression on other tabs to save space if needed
-    document.getElementById('exp-fader').style.display = (id === 'live') ? 'flex' : 'none';
-}
-
+function rePB() { document.getElementById('pb').value=8192; mPB(8192); }
+function tM(c, v, id) { mS[id]=!mS[id]; mCC(c, mS[id]?127:0); document.getElementById(id).classList.toggle('active', mS[id]); }
 setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 </script>
 </body>
