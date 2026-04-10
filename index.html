@@ -3,306 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>TITAN Pa1000 PRO v31</title>
+    <title>TITAN Pa1000 v38 - ULTIMATE MAQAM</title>
     <style>
         :root { --bg: #000; --accent: #00f2ff; --red: #ff1744; --panel: #0d0d0d; --btn: #1a1a1a; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; outline: none; }
-        
-        body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            background: var(--bg); color: #fff; margin: 0; 
-            height: 100dvh; width: 100vw; overflow: hidden; 
-            display: flex; flex-direction: column; 
-        }
-
-        /* Status Bar */
-        .status-bar { height: 4dvh; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; font-size: 10px; color: #444; background: #000; }
-        #midi-led { width: 8px; height: 8px; border-radius: 50%; background: #200; display: inline-block; margin-right: 5px; transition: 0.1s; }
-
-        /* Nav Tabs */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        .status-bar { height: 4dvh; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; font-size: 10px; color: #444; background: #050505; }
+        #midi-led { width: 8px; height: 8px; border-radius: 50%; background: #200; }
         .nav { height: 8dvh; display: flex; background: #050505; border-bottom: 1px solid #222; }
-        .tab { flex: 1; border: none; background: none; color: #555; font-weight: 900; font-size: 11px; text-transform: uppercase; }
+        .tab { flex: 1; border: none; background: none; color: #555; font-weight: 900; font-size: 10px; text-transform: uppercase; }
         .tab.active { color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); background: #0a0a0a; }
-
-        /* Main Area */
-        .main { flex: 1; padding: 5px; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
-        .view { display: none; height: 100%; flex-direction: column; gap: 5px; }
+        .main { flex: 1; padding: 8px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+        .view { display: none; height: 100%; flex-direction: column; gap: 8px; }
         .view.active { display: flex; }
-
-        .card { background: var(--panel); border: 1px solid #1a1a1a; border-radius: 8px; padding: 6px; }
-        .grid { display: grid; gap: 4px; }
-        .g4 { grid-template-columns: repeat(4, 1fr); }
-        .g3 { grid-template-columns: repeat(3, 1fr); }
-        .g2 { grid-template-columns: repeat(2, 1fr); }
-
-        button { background: var(--btn); border: 1px solid #333; color: #fff; padding: 12px 2px; border-radius: 6px; font-weight: bold; font-size: 10px; }
-        button:active { background: var(--accent) !important; color: #000 !important; }
-        .b-red { border-color: var(--red); color: var(--red); }
-        .n-act { background: var(--accent) !important; color: #000; box-shadow: 0 0 12px var(--accent); border:none; }
-
-        /* Search */
-        .search-wrap { position: relative; }
-        input[type="text"] { width: 100%; padding: 12px; background: #000; border: 1px solid #333; border-radius: 6px; color: var(--accent); font-weight: bold; font-size: 14px; }
-        #res-box { position: absolute; width: 100%; max-height: 40dvh; background: rgba(0,0,0,0.95); border: 1px solid var(--accent); z-index: 999; overflow-y: auto; display: none; border-radius: 0 0 8px 8px; }
-        .res-item { padding: 12px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-
-        /* Footer Sliders (Responsive) */
-        .footer { height: 25dvh; background: #000; border-top: 1px solid #333; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
-        @media (max-width: 600px) {
-            .footer { grid-template-columns: 1fr; height: 32dvh; }
-            button { padding: 15px 2px; font-size: 11px; }
-        }
-
-        .slider-group { position: relative; display: flex; align-items: center; background: #0a0a0a; border-radius: 10px; border: 1px solid #222; overflow: hidden; }
-        input[type=range] { width: 100%; height: 100%; appearance: none; background: transparent; margin: 0; padding: 0 10px; z-index: 2; }
-        input[type=range]::-webkit-slider-thumb { appearance: none; width: 50px; height: 80px; background: var(--accent); border-radius: 6px; box-shadow: 0 0 15px var(--accent); }
-        .slider-label { position: absolute; left: 15px; pointer-events: none; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.15); text-transform: uppercase; z-index: 1; }
-
-        /* Macro List Style */
-        #alist { flex: 1; overflow-y: auto; margin-top: 5px; }
-        .macro-row { display: flex; justify-content: space-between; align-items: center; background: #151515; margin-bottom: 4px; border-radius: 6px; border: 1px solid #222; }
+        .card { background: var(--panel); border: 1px solid #1a1a1a; border-radius: 12px; padding: 10px; }
+        .grid { display: grid; gap: 6px; grid-template-columns: repeat(4, 1fr); }
+        button { background: var(--btn); border: 1px solid #333; color: #fff; padding: 18px 2px; border-radius: 8px; font-weight: bold; font-size: 12px; }
+        .n-act { background: var(--accent) !important; color: #000; box-shadow: 0 0 15px var(--accent); border:none; }
+        select { background: #111; color: var(--accent); border: 1px solid #333; padding: 15px; border-radius: 10px; width: 100%; font-size: 15px; font-weight: bold; appearance: none; text-align: center; }
+        .footer { height: 20dvh; background: #000; border-top: 1px solid #333; padding: 10px; display: flex; flex-direction: column; justify-content: center; }
+        .slider-group { position: relative; height: 70px; background: #0a0a0a; border-radius: 15px; border: 1px solid #222; overflow: hidden; }
+        input[type=range] { width: 100%; height: 100%; appearance: none; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { appearance: none; width: 80px; height: 70px; background: var(--accent); border-radius: 10px; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
 <div class="status-bar">
-    <div><span id="midi-led"></span> <span id="clock">00:00</span></div>
+    <div><span id="midi-led"></span> MIDI READY</div>
+    <div id="clock">00:00</div>
     <div id="bat">BATT: --%</div>
 </div>
 
 <div class="nav">
-    <button class="tab active" onclick="tab('live')">ENGINE</button>
-    <button class="tab" onclick="tab('scale')">MAKAM</button>
-    <button class="tab" onclick="tab('auto')">MACROS</button>
-    <button class="tab b-red" onclick="panic()">PANIC</button>
+    <button class="tab active" onclick="tab('scale', this)">MAKAM</button>
+    <button class="tab" onclick="tab('live', this)">ENGINE</button>
+    <button class="tab" onclick="tab('auto', this)">MACROS</button>
 </div>
 
 <div class="main">
-    <div id="live" class="view active">
-        <div class="card g4 grid">
-            <button onclick="document.getElementById('f').click()">FACT</button>
-            <button onclick="document.getElementById('u').click()">USER</button>
-            <button onclick="document.getElementById('d').click()">DIR</button>
-            <button onclick="document.getElementById('s').click()">SBK</button>
-        </div>
-        <input type="file" id="f" hidden onchange="ld(this,'F')">
-        <input type="file" id="u" hidden onchange="ld(this,'U')">
-        <input type="file" id="d" hidden onchange="ld(this,'D')">
-        <input type="file" id="s" hidden onchange="ld(this,'S')">
-
-        <div class="search-wrap">
-            <input type="text" id="sin" placeholder="SEARCH STYLE / VOICE..." autocomplete="off">
-            <div id="res-box"></div>
-        </div>
-
-        <div class="card grid g4">
-            <button onclick="cc(80,0)">IN1</button><button onclick="cc(80,1)">IN2</button><button onclick="cc(80,2)">IN3</button><button onclick="cc(80,11)" class="b-red">BRK</button>
-            <button onclick="cc(80,3)">V1</button><button onclick="cc(80,4)">V2</button><button onclick="cc(80,5)">V3</button><button onclick="cc(80,6)">V4</button>
-            <button onclick="cc(80,7)" style="color:var(--accent)">F1</button><button onclick="cc(80,8)" style="color:var(--accent)">F2</button><button onclick="cc(80,9)" style="color:var(--accent)">F3</button><button onclick="cc(80,10)" style="color:var(--accent)">F4</button>
-        </div>
-
-        <div class="card grid g3" style="flex:1">
-            <button ontouchstart="v(20);cc(80,127)" ontouchend="cc(80,0)">DNC 1</button>
-            <button ontouchstart="v(20);cc(81,127)" ontouchend="cc(81,0)">DNC 2</button>
-            <button ontouchstart="v(20);cc(82,127)" ontouchend="cc(82,0)">DNC 3</button>
-        </div>
-    </div>
-
-    <div id="scale" class="view">
+    <div id="scale" class="view active">
         <div class="card">
-            <select id="mkm" onchange="applyM(this.value)" style="width:100%; background:#000; color:var(--accent); padding:12px; border:1px solid #333; border-radius:8px;">
-                <option value="reset">NATURAL SCALE</option>
-                <option value="rast">RAST</option><option value="hitz">HITZAZ</option>
-                <option value="ous">USSAK</option><option value="sab">SABAH</option>
+            <select id="mkm_select">
+                <option value="none">-- NATURAL --</option>
+                <optgroup label="ΔΗΜΟΦΙΛΗ">
+                    <option value="rast">RAST (Ραστ)</option>
+                    <option value="ussak">USSAK (Ουσάκ)</option>
+                    <option value="hicaz">HICAZ (Χιτζάζ)</option>
+                    <option value="huzam">HUZAM (Χουζάμ)</option>
+                    <option value="sabah">SABAH (Σαμπάχ)</option>
+                </optgroup>
+                <optgroup label="ΔΕΥΤΕΡΕΥΟΝΤΑ">
+                    <option value="karj">KARJIGAR (Καρτζιγιάρ)</option>
+                    <option value="neva">NEVA (Νεβά)</option>
+                    <option value="beyat">BEYATI (Μπεϊγιατί)</option>
+                    <option value="ispah">ISPAHAN (Ισπαχάν)</option>
+                    <option value="u-ced">UZZAL CEDID</option>
+                </optgroup>
+                <optgroup label="ΣΕΓΚΙΑΧ / ΣΠΑΝΙΑ">
+                    <option value="sega">SEGAH (Σεγκιάχ)</option>
+                    <option value="must">MUSTAAR (Μουσταάρ)</option>
+                    <option value="best">BESTENIGAR</option>
+                    <option value="evic">EVIC (Εβίτς)</option>
+                    <option value="ferah">FERAHNAK</option>
+                    <option value="iraq">IRAQ (Ιράκ)</option>
+                </optgroup>
+                <optgroup label="ΒΑΡΙΑ ΑΝΑΤΟΛΙΚΑ">
+                    <option value="z-hic">ZIRGULE HICAZ</option>
+                    <option value="suzin">SUZINAK</option>
+                    <option value="nakis">NAKIS</option>
+                    <option value="rehav">REHAVI</option>
+                    <option value="penj">PENJIGAH</option>
+                    <option value="hisar">HISAR</option>
+                </optgroup>
+                <optgroup label="ΕΙΔΙΚΑ">
+                    <option value="acem">ACEM (Ατζέμ)</option>
+                    <option value="mahur">MAHUR (Μαχούρ)</option>
+                    <option value="kurdi">KURDI (Κιουρδί)</option>
+                    <option value="nihav">NIHAVENT (Νιαβέντ)</option>
+                    <option value="busel">BUSELIK (Μπουσελίκ)</option>
+                </optgroup>
             </select>
         </div>
-        <div id="sgrid" class="card grid g4" style="flex:1"></div>
-        <button onclick="resS()" style="width:100%; height:50px; background:#111; color:var(--accent); font-weight:bold;">RESET TUNING</button>
+        <div class="card" style="flex:1;">
+            <div id="sgrid" class="grid"></div>
+        </div>
+        <button onclick="resS()" style="width:100%; color: var(--red); border-color: var(--red);">RESET ALL</button>
     </div>
-
-    <div id="auto" class="view">
-        <div class="card grid g2">
-            <button id="rb" class="b-red" onclick="tRec()">START REC</button>
-            <button onclick="play()" style="color:var(--accent)">PLAY LOADED</button>
-        </div>
-        <div class="card" style="display:flex; gap:5px;">
-            <input type="text" id="sn" placeholder="Όνομα Macro..." style="flex:1;">
-            <button onclick="save()" style="background:var(--accent); color:#000; padding:0 15px; border:none;">SAVE</button>
-        </div>
-        <div class="card" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-            <div style="display:flex; justify-content:space-between; font-size:10px; color:#555; padding:4px;">
-                <span>SAVED MACROS</span>
-                <span onclick="clearAllMacros()" style="color:var(--red); cursor:pointer;">CLEAR ALL</span>
-            </div>
-            <div id="alist"></div>
-        </div>
-    </div>
+    
+    <div id="live" class="view"></div>
+    <div id="auto" class="view"></div>
 </div>
 
 <div class="footer">
     <div class="slider-group">
-        <span class="slider-label">Pitch Bend</span>
         <input type="range" id="pb" min="0" max="16383" value="8192" oninput="bend(this.value)" ontouchend="rPB()">
-    </div>
-    <div class="slider-group">
-        <span class="slider-label">Expression</span>
-        <input type="range" min="0" max="127" value="127" oninput="cc(11,this.value)">
     </div>
 </div>
 
 <script>
-let out = null, dtn = new Array(12).fill(false), db = [], rec = false, seq = [], st = 0;
+let out = null, dtn = new Array(12).fill(false);
 
-// MIDI INIT
 navigator.requestMIDIAccess({sysex:true}).then(m => {
     out = Array.from(m.outputs.values())[0];
     if(out) document.getElementById('midi-led').style.background = '#00f2ff';
-}).catch(() => console.log("MIDI Error"));
-
-function cc(c,v) { 
-    if(out) {
-        out.send([0xB0, c, v]);
-        document.getElementById('midi-led').style.boxShadow = "0 0 10px #00f2ff";
-        setTimeout(()=>document.getElementById('midi-led').style.boxShadow="none", 100);
-    }
-    if(rec) seq.push({t: Date.now()-st, d: [0xB0, c, v]});
-}
-function v(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
-function bend(v) { if(out) out.send([0xE0, v & 0x7F, (v >> 7) & 0x7F]); }
-function rPB() { document.getElementById('pb').value=8192; bend(8192); }
-
-function panic() {
-    if(!out) return;
-    for(let i=0; i<16; i++) { out.send([0xB0+i, 123, 0]); out.send([0xB0+i, 121, 0]); }
-    cc(80,10); v(100);
-}
-
-// Monitors
-setInterval(() => { document.getElementById('clock').innerText = new Date().toTimeString().split(' ')[0]; }, 1000);
-navigator.getBattery().then(b => {
-    const update = () => document.getElementById('bat').innerText = "BATT: " + Math.round(b.level * 100) + "%";
-    update(); b.onlevelchange = update;
 });
 
-// Makam Logic
-function setN(i, s) {
-    dtn[i] = s;
-    document.getElementById('n'+i).classList.toggle('n-act', s);
-    if(out) out.send([0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x08, i, s ? 0x0E : 0x40, 0xF7]);
-    v(15);
-}
-function resS() { for(let i=0; i<12; i++) setN(i, false); }
-const mkms = {"rast":[4,11],"hitz":[1,6],"ous":[4],"sab":[4,6,11]};
-function applyM(m) { resS(); if(mkms[m]) mkms[m].forEach(n => setN(n,true)); }
-
-// DB Search
-function ld(f, c) {
-    const r = new FileReader();
-    r.onload = (e) => {
-        e.target.result.split('\n').forEach(l => {
-            const p = l.split(',');
-            if(p.length >= 4) db.push({n:p[0].trim(), m:p[1].trim(), l:p[2].trim(), pc:p[3].trim(), cat:c});
-        });
-        alert("Sector " + c + " Loaded!");
-    };
-    r.readAsText(f.files[0]);
-}
-
-const sin = document.getElementById('sin'), res = document.getElementById('res-box');
-sin.oninput = function() {
-    const val = this.value.toLowerCase();
-    if(val.length < 2) { res.style.display='none'; return; }
-    res.innerHTML = '';
-    const filtered = db.filter(x => x.n.toLowerCase().includes(val)).slice(0,30);
-    if(filtered.length > 0) {
-        res.style.display = 'block';
-        filtered.forEach(i => {
-            const d = document.createElement('div'); d.className='res-item';
-            d.innerHTML = `<span>${i.n}</span><small style="color:var(--accent)">${i.cat}</small>`;
-            d.onclick = () => {
-                cc(0,i.m); cc(32,i.l); if(out) out.send([0xC0, i.pc]);
-                res.style.display='none'; sin.value=i.n; v(30);
-            };
-            res.appendChild(d);
-        });
-    }
+// --- THE COMPLETE MAQAM DICTIONARY ---
+// 0x40=0, 0x21=-31c, 0x0E=-50c, 0x05=-58c, 0x12=-45c, 0x15=-43c, 0x00=-64c
+const maqamData = {
+    "rast":  [{idx: 4, val: 0x21}, {idx: 11, val: 0x21}],
+    "ussak": [{idx: 2, val: 0x05}],
+    "hicaz": [{idx: 1, val: 0x12}],
+    "huzam": [{idx: 1, val: 0x15}, {idx: 4, val: 0x21}, {idx: 11, val: 0x21}],
+    "sabah": [{idx: 2, val: 0x05}, {idx: 6, val: 0x0E}],
+    "karj":  [{idx: 2, val: 0x0E}, {idx: 8, val: 0x0E}],
+    "neva":  [{idx: 4, val: 0x21}, {idx: 9, val: 0x21}],
+    "beyat": [{idx: 2, val: 0x05}],
+    "ispah": [{idx: 2, val: 0x0E}, {idx: 9, val: 0x21}],
+    "u-ced": [{idx: 1, val: 0x12}, {idx: 4, val: 0x21}],
+    "sega":  [{idx: 0, val: 0x21}, {idx: 5, val: 0x21}],
+    "must":  [{idx: 0, val: 0x21}, {idx: 4, val: 0x0E}],
+    "best":  [{idx: 0, val: 0x21}, {idx: 5, val: 0x0E}, {idx: 11, val: 0x21}, {idx: 6, val: 0x0E}],
+    "evic":  [{idx: 0, val: 0x21}, {idx: 4, val: 0x21}, {idx: 7, val: 0x21}, {idx: 11, val: 0x0E}],
+    "ferah": [{idx: 4, val: 0x21}, {idx: 7, val: 0x21}, {idx: 11, val: 0x21}],
+    "iraq":  [{idx: 0, val: 0x21}, {idx: 4, val: 0x0E}, {idx: 11, val: 0x21}],
+    "z-hic": [{idx: 1, val: 0x12}, {idx: 4, val: 0x12}, {idx: 8, val: 0x12}],
+    "suzin": [{idx: 4, val: 0x21}, {idx: 11, val: 0x12}],
+    "nakis": [{idx: 2, val: 0x0E}, {idx: 6, val: 0x21}],
+    "rehav": [{idx: 2, val: 0x0E}, {idx: 4, val: 0x21}, {idx: 11, val: 0x21}],
+    "penj":  [{idx: 4, val: 0x21}, {idx: 2, val: 0x21}],
+    "hisar": [{idx: 1, val: 0x12}, {idx: 8, val: 0x21}],
+    "acem":  [{idx: 11, val: 0x40}], 
+    "mahur": [{idx: 11, val: 0x21}],
+    "kurdi": [{idx: 1, val: 0x40}], 
+    "nihav": [{idx: 8, val: 0x0E}, {idx: 11, val: 0x0E}],
+    "busel": [{idx: 1, val: 0x40}, {idx: 4, val: 0x40}]
 };
 
-// --- MACRO ENGINE ---
-function tRec() { 
-    rec = !rec; 
-    const btn = document.getElementById('rb');
-    btn.innerText = rec ? "STOP REC" : "START REC";
-    btn.classList.toggle('n-act', rec);
-    if(rec) { seq = []; st = Date.now(); v(50); } 
+function applyMakam(baseIdx) {
+    const type = document.getElementById('mkm_select').value;
+    resS(); 
+    if(type === "none") return;
+    maqamData[type].forEach(n => setN((baseIdx + n.idx) % 12, true, n.val));
+    if(navigator.vibrate) navigator.vibrate(40);
 }
 
-function play() { 
-    if(!seq || seq.length === 0) return alert("Empty Macro!");
-    v(20);
-    seq.forEach(e => setTimeout(() => { if(out) out.send(e.d); }, e.t));
+function setN(i, s, val = 0x0E) {
+    dtn[i] = s;
+    const btn = document.getElementById('n'+i);
+    if(btn) btn.classList.toggle('n-act', s);
+    if(out) out.send([0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x08, i, s ? val : 0x40, 0xF7]);
 }
 
-function save() { 
-    const input = document.getElementById('sn');
-    let name = input.value.trim();
-    if(!name || seq.length === 0) return alert("Δώσε όνομα και γράψε κινήσεις (REC)!");
-    
-    localStorage.setItem('t_' + name, JSON.stringify(seq));
-    input.value = ""; 
-    upL();
-    v(30);
-}
+function resS() { for(let i=0; i<12; i++) setN(i, false); }
 
-function deleteMacro(key) {
-    if(confirm("Διαγραφή;")) { localStorage.removeItem(key); upL(); }
-}
+const notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const sg = document.getElementById('sgrid');
+notes.forEach((n,i) => {
+    const b = document.createElement('button');
+    b.id = 'n'+i; b.innerText = n;
+    b.onclick = () => applyMakam(i);
+    sg.appendChild(b);
+});
 
-function clearAllMacros() {
-    if(confirm("Διαγραφή όλων;")) {
-        Object.keys(localStorage).forEach(k => { if(k.startsWith('t_')) localStorage.removeItem(k); });
-        upL();
-    }
-}
-
-function upL() {
-    const list = document.getElementById('alist'); 
-    list.innerHTML = '';
-    Object.keys(localStorage).sort().forEach(k => {
-        if(k.startsWith('t_')) {
-            const row = document.createElement('div');
-            row.className = 'macro-row';
-            row.innerHTML = `
-                <div style="flex:1; padding:12px;" onclick="loadMacro('${k}')">▶ ${k.substring(2)}</div>
-                <div style="padding:12px; color:var(--red); font-weight:bold;" onclick="deleteMacro('${k}')">✕</div>
-            `;
-            list.appendChild(row);
-        }
-    });
-}
-
-function loadMacro(key) {
-    seq = JSON.parse(localStorage.getItem(key));
-    v(15);
-    alert("Loaded: " + key.substring(2));
-}
-
-function tab(id) {
+function tab(id, el) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    event.currentTarget.classList.add('active');
+    el.classList.add('active');
 }
 
-// Init Scale Grid
-const sg = document.getElementById('sgrid');
-['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'].forEach((n,i) => {
-    sg.innerHTML += `<button id="n${i}" onclick="setN(${i},!dtn[${i}])">${n}</button>`;
-});
-upL();
+function bend(v) { if(out) out.send([0xE0, v & 0x7F, (v >> 7) & 0x7F]); }
+function rPB() { document.getElementById('pb').value=8192; bend(8192); }
+setInterval(() => { document.getElementById('clock').innerText = new Date().toTimeString().split(' ')[0]; }, 1000);
 </script>
 </body>
 </html>
