@@ -3,100 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TITAN Pa1000 v38 - ULTIMATE MAQAM</title>
+    <title>TITAN Pa1000 v41 - FULL MASTER</title>
     <style>
-        :root { --bg: #000; --accent: #00f2ff; --red: #ff1744; --panel: #0d0d0d; --btn: #1a1a1a; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; margin: 0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-        .status-bar { height: 4dvh; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; font-size: 10px; color: #444; background: #050505; }
-        #midi-led { width: 8px; height: 8px; border-radius: 50%; background: #200; }
+        :root { --bg: #000; --accent: #00f2ff; --red: #ff1744; --orange: #ffab40; --panel: #0d0d0d; --btn: #1a1a1a; --text: #eee; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; outline: none; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* HEADER */
+        .status-bar { height: 4dvh; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; font-size: 10px; color: #555; background: #050505; border-bottom: 1px solid #111; }
+        #midi-led { width: 10px; height: 10px; border-radius: 50%; background: #200; box-shadow: 0 0 5px #000; transition: 0.3s; }
+        
+        /* NAVIGATION */
         .nav { height: 8dvh; display: flex; background: #050505; border-bottom: 1px solid #222; }
-        .tab { flex: 1; border: none; background: none; color: #555; font-weight: 900; font-size: 10px; text-transform: uppercase; }
+        .tab { flex: 1; border: none; background: none; color: #444; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
         .tab.active { color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); background: #0a0a0a; }
-        .main { flex: 1; padding: 8px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
-        .view { display: none; height: 100%; flex-direction: column; gap: 8px; }
+
+        /* MAIN CONTENT */
+        .main { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+        .view { display: none; height: 100%; flex-direction: column; gap: 10px; }
         .view.active { display: flex; }
-        .card { background: var(--panel); border: 1px solid #1a1a1a; border-radius: 12px; padding: 10px; }
-        .grid { display: grid; gap: 6px; grid-template-columns: repeat(4, 1fr); }
-        button { background: var(--btn); border: 1px solid #333; color: #fff; padding: 18px 2px; border-radius: 8px; font-weight: bold; font-size: 12px; }
-        .n-act { background: var(--accent) !important; color: #000; box-shadow: 0 0 15px var(--accent); border:none; }
-        select { background: #111; color: var(--accent); border: 1px solid #333; padding: 15px; border-radius: 10px; width: 100%; font-size: 15px; font-weight: bold; appearance: none; text-align: center; }
-        .footer { height: 20dvh; background: #000; border-top: 1px solid #333; padding: 10px; display: flex; flex-direction: column; justify-content: center; }
-        .slider-group { position: relative; height: 70px; background: #0a0a0a; border-radius: 15px; border: 1px solid #222; overflow: hidden; }
-        input[type=range] { width: 100%; height: 100%; appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { appearance: none; width: 80px; height: 70px; background: var(--accent); border-radius: 10px; }
+        
+        .card { background: var(--panel); border: 1px solid #1a1a1a; border-radius: 12px; padding: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.6); }
+        .label { font-size: 9px; color: #555; text-transform: uppercase; margin-bottom: 8px; display: block; font-weight: 900; letter-spacing: 0.5px; }
+        
+        .grid { display: grid; gap: 8px; }
+        .g4 { grid-template-columns: repeat(4, 1fr); }
+        .g3 { grid-template-columns: repeat(3, 1fr); }
+        
+        /* BUTTONS */
+        button { background: var(--btn); border: 1px solid #333; color: #fff; padding: 16px 2px; border-radius: 8px; font-weight: bold; font-size: 11px; transition: 0.1s; }
+        button:active { background: var(--accent) !important; color: #000 !important; transform: scale(0.96); }
+        
+        .btn-pad { background: #0a0a0a; border: 1px solid var(--orange); color: var(--orange); height: 65px; font-size: 13px; }
+        .btn-pad:active { background: var(--orange) !important; color: #000 !important; box-shadow: 0 0 25px var(--orange); }
+        
+        .b-red { border-color: var(--red); color: var(--red); }
+        .n-act { background: var(--accent) !important; color: #000; box-shadow: 0 0 20px var(--accent); border:none; }
+        
+        /* SELECT BOX */
+        select { background: #111; color: var(--accent); border: 1px solid #333; padding: 16px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: bold; appearance: none; text-align: center; cursor: pointer; }
+        
+        /* FOOTER SLIDER */
+        .footer { height: 20dvh; background: #000; border-top: 1px solid #333; padding: 15px; display: flex; flex-direction: column; justify-content: center; }
+        .slider-group { position: relative; height: 80px; background: #050505; border-radius: 20px; border: 1px solid #222; overflow: hidden; }
+        input[type=range] { width: 100%; height: 100%; appearance: none; background: transparent; cursor: pointer; z-index: 5; position: relative; }
+        input[type=range]::-webkit-slider-thumb { appearance: none; width: 100px; height: 80px; background: var(--accent); border-radius: 15px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4); }
+        .slider-bg-text { position: absolute; width: 100%; text-align: center; top: 50%; transform: translateY(-50%); font-size: 10px; font-weight: 900; color: #222; z-index: 1; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
 <div class="status-bar">
-    <div><span id="midi-led"></span> MIDI READY</div>
-    <div id="clock">00:00</div>
+    <div><span id="midi-led"></span> MIDI SYSTEM ACTIVE</div>
+    <div id="clock">00:00:00</div>
     <div id="bat">BATT: --%</div>
 </div>
 
 <div class="nav">
-    <button class="tab active" onclick="tab('scale', this)">MAKAM</button>
-    <button class="tab" onclick="tab('live', this)">ENGINE</button>
+    <button class="tab active" onclick="tab('live', this)">ENGINE</button>
+    <button class="tab" onclick="tab('scale', this)">MAKAM</button>
     <button class="tab" onclick="tab('auto', this)">MACROS</button>
 </div>
 
 <div class="main">
-    <div id="scale" class="view active">
+    <div id="live" class="view active">
         <div class="card">
+            <span class="label">Performance Pads (Touch On/Off)</span>
+            <div class="grid g4">
+                <button class="btn-pad" ontouchstart="cc(102,127)" ontouchend="cc(102,0)">PAD 1</button>
+                <button class="btn-pad" ontouchstart="cc(103,127)" ontouchend="cc(103,0)">PAD 2</button>
+                <button class="btn-pad" ontouchstart="cc(104,127)" ontouchend="cc(104,0)">PAD 3</button>
+                <button class="btn-pad" ontouchstart="cc(105,127)" ontouchend="cc(105,0)">PAD 4</button>
+            </div>
+            <button onclick="cc(106,127)" style="width:100%; margin-top:8px; height:35px; color:var(--red); border-color:var(--red); font-size:10px;">STOP ALL PADS</button>
+        </div>
+
+        <div class="card">
+            <span class="label">Style Elements & Variations</span>
+            <div class="grid g4">
+                <button onclick="cc(80,0)">IN 1</button><button onclick="cc(80,1)">IN 2</button><button onclick="cc(80,2)">IN 3</button><button onclick="cc(80,11)" class="b-red">BREAK</button>
+                <button onclick="cc(80,3)">VAR 1</button><button onclick="cc(80,4)">VAR 2</button><button onclick="cc(80,5)">VAR 3</button><button onclick="cc(80,6)">VAR 4</button>
+                <button onclick="cc(80,7)" style="color:var(--accent)">FILL 1</button><button onclick="cc(80,8)" style="color:var(--accent)">FILL 2</button><button onclick="cc(80,9)" style="color:var(--accent)">FILL 3</button><button onclick="cc(80,10)" style="color:var(--accent)">FILL 4</button>
+                <button onclick="cc(80,12)">END 1</button><button onclick="cc(80,13)">END 2</button><button onclick="cc(80,14)">END 3</button><button onclick="panic()" class="b-red">PANIC</button>
+            </div>
+        </div>
+
+        <div class="card grid g3" style="flex:1">
+            <button ontouchstart="cc(80,127)" ontouchend="cc(80,0)">DNC 1</button>
+            <button ontouchstart="cc(81,127)" ontouchend="cc(81,0)">DNC 2</button>
+            <button ontouchstart="cc(82,127)" ontouchend="cc(82,0)">DNC 3</button>
+        </div>
+    </div>
+
+    <div id="scale" class="view">
+        <div class="card">
+            <span class="label">Professional Makam Selector</span>
             <select id="mkm_select">
-                <option value="none">-- NATURAL --</option>
-                <optgroup label="ΔΗΜΟΦΙΛΗ">
-                    <option value="rast">RAST (Ραστ)</option>
-                    <option value="ussak">USSAK (Ουσάκ)</option>
-                    <option value="hicaz">HICAZ (Χιτζάζ)</option>
+                <option value="none">-- NATURAL (OFF) --</option>
+                <optgroup label="ΚΥΡΙΑ ΛΑΪΚΑ">
+                    <option value="rast">RAST (Ραστ -31c)</option>
+                    <option value="ussak">USSAK (Ουσάκ -58c)</option>
+                    <option value="hicaz">HICAZ (Χιτζάζ -45c)</option>
                     <option value="huzam">HUZAM (Χουζάμ)</option>
                     <option value="sabah">SABAH (Σαμπάχ)</option>
                 </optgroup>
-                <optgroup label="ΔΕΥΤΕΡΕΥΟΝΤΑ">
+                <optgroup label="ΑΝΑΤΟΛΙΚΑ / ΣΥΝΘΕΤΑ">
                     <option value="karj">KARJIGAR (Καρτζιγιάρ)</option>
                     <option value="neva">NEVA (Νεβά)</option>
                     <option value="beyat">BEYATI (Μπεϊγιατί)</option>
                     <option value="ispah">ISPAHAN (Ισπαχάν)</option>
                     <option value="u-ced">UZZAL CEDID</option>
+                    <option value="hisar">HISAR (Χισάρ)</option>
                 </optgroup>
-                <optgroup label="ΣΕΓΚΙΑΧ / ΣΠΑΝΙΑ">
+                <optgroup label="ΣΕΓΚΙΑΧ & ΠΑΡΑΛΛΑΓΕΣ">
                     <option value="sega">SEGAH (Σεγκιάχ)</option>
                     <option value="must">MUSTAAR (Μουσταάρ)</option>
                     <option value="best">BESTENIGAR</option>
                     <option value="evic">EVIC (Εβίτς)</option>
-                    <option value="ferah">FERAHNAK</option>
                     <option value="iraq">IRAQ (Ιράκ)</option>
+                    <option value="ferah">FERAHNAK</option>
                 </optgroup>
-                <optgroup label="ΒΑΡΙΑ ΑΝΑΤΟΛΙΚΑ">
+                <optgroup label="ΕΙΔΙΚΑ ΚΟΥΡΔΙΣΜΑΤΑ">
                     <option value="z-hic">ZIRGULE HICAZ</option>
                     <option value="suzin">SUZINAK</option>
                     <option value="nakis">NAKIS</option>
                     <option value="rehav">REHAVI</option>
                     <option value="penj">PENJIGAH</option>
-                    <option value="hisar">HISAR</option>
-                </optgroup>
-                <optgroup label="ΕΙΔΙΚΑ">
                     <option value="acem">ACEM (Ατζέμ)</option>
                     <option value="mahur">MAHUR (Μαχούρ)</option>
                     <option value="kurdi">KURDI (Κιουρδί)</option>
                     <option value="nihav">NIHAVENT (Νιαβέντ)</option>
-                    <option value="busel">BUSELIK (Μπουσελίκ)</option>
                 </optgroup>
             </select>
         </div>
         <div class="card" style="flex:1;">
-            <div id="sgrid" class="grid"></div>
+            <span class="label">Select Tonic (Base Note)</span>
+            <div id="sgrid" class="grid g4"></div>
         </div>
-        <button onclick="resS()" style="width:100%; color: var(--red); border-color: var(--red);">RESET ALL</button>
+        <button onclick="resS()" style="width:100%; height:45px; color: var(--red); border-color: var(--red); font-weight:900;">RESET ALL SCALES</button>
     </div>
-    
-    <div id="live" class="view"></div>
-    <div id="auto" class="view"></div>
+
+    <div id="auto" class="view">
+        <div class="card" style="flex:1; display:flex; align-items:center; justify-content:center;">
+            <p style="color:#333; font-weight:bold; font-size:12px; text-align:center;">MACRO RECORDING ENGINE<br>COMING SOON IN V42</p>
+        </div>
+    </div>
 </div>
 
 <div class="footer">
     <div class="slider-group">
+        <div class="slider-bg-text">PITCH BEND CONTROL</div>
         <input type="range" id="pb" min="0" max="16383" value="8192" oninput="bend(this.value)" ontouchend="rPB()">
     </div>
 </div>
@@ -104,13 +160,22 @@
 <script>
 let out = null, dtn = new Array(12).fill(false);
 
+// MIDI CONNECTION
 navigator.requestMIDIAccess({sysex:true}).then(m => {
     out = Array.from(m.outputs.values())[0];
-    if(out) document.getElementById('midi-led').style.background = '#00f2ff';
+    if(out) {
+        document.getElementById('midi-led').style.background = '#00f2ff';
+        document.getElementById('midi-led').style.boxShadow = '0 0 15px #00f2ff';
+    }
 });
 
-// --- THE COMPLETE MAQAM DICTIONARY ---
-// 0x40=0, 0x21=-31c, 0x0E=-50c, 0x05=-58c, 0x12=-45c, 0x15=-43c, 0x00=-64c
+function cc(c,v) { if(out) out.send([0xB0, c, v]); if(navigator.vibrate) navigator.vibrate(25); }
+function bend(v) { if(out) out.send([0xE0, v & 0x7F, (v >> 7) & 0x7F]); }
+function rPB() { document.getElementById('pb').value=8192; bend(8192); }
+function panic() { for(let i=0; i<16; i++) if(out) out.send([0xB0+i, 123, 0]); if(navigator.vibrate) navigator.vibrate(100); }
+
+// --- THE MASTER MAQAM DATABASE (v41) ---
+// Hex Ref: 0x40=0, 0x21=-31c, 0x0E=-50c, 0x05=-58c, 0x12=-45c, 0x15=-43c
 const maqamData = {
     "rast":  [{idx: 4, val: 0x21}, {idx: 11, val: 0x21}],
     "ussak": [{idx: 2, val: 0x05}],
@@ -122,61 +187,5 @@ const maqamData = {
     "beyat": [{idx: 2, val: 0x05}],
     "ispah": [{idx: 2, val: 0x0E}, {idx: 9, val: 0x21}],
     "u-ced": [{idx: 1, val: 0x12}, {idx: 4, val: 0x21}],
-    "sega":  [{idx: 0, val: 0x21}, {idx: 5, val: 0x21}],
-    "must":  [{idx: 0, val: 0x21}, {idx: 4, val: 0x0E}],
-    "best":  [{idx: 0, val: 0x21}, {idx: 5, val: 0x0E}, {idx: 11, val: 0x21}, {idx: 6, val: 0x0E}],
-    "evic":  [{idx: 0, val: 0x21}, {idx: 4, val: 0x21}, {idx: 7, val: 0x21}, {idx: 11, val: 0x0E}],
-    "ferah": [{idx: 4, val: 0x21}, {idx: 7, val: 0x21}, {idx: 11, val: 0x21}],
-    "iraq":  [{idx: 0, val: 0x21}, {idx: 4, val: 0x0E}, {idx: 11, val: 0x21}],
-    "z-hic": [{idx: 1, val: 0x12}, {idx: 4, val: 0x12}, {idx: 8, val: 0x12}],
-    "suzin": [{idx: 4, val: 0x21}, {idx: 11, val: 0x12}],
-    "nakis": [{idx: 2, val: 0x0E}, {idx: 6, val: 0x21}],
-    "rehav": [{idx: 2, val: 0x0E}, {idx: 4, val: 0x21}, {idx: 11, val: 0x21}],
-    "penj":  [{idx: 4, val: 0x21}, {idx: 2, val: 0x21}],
-    "hisar": [{idx: 1, val: 0x12}, {idx: 8, val: 0x21}],
-    "acem":  [{idx: 11, val: 0x40}], 
-    "mahur": [{idx: 11, val: 0x21}],
-    "kurdi": [{idx: 1, val: 0x40}], 
-    "nihav": [{idx: 8, val: 0x0E}, {idx: 11, val: 0x0E}],
-    "busel": [{idx: 1, val: 0x40}, {idx: 4, val: 0x40}]
-};
-
-function applyMakam(baseIdx) {
-    const type = document.getElementById('mkm_select').value;
-    resS(); 
-    if(type === "none") return;
-    maqamData[type].forEach(n => setN((baseIdx + n.idx) % 12, true, n.val));
-    if(navigator.vibrate) navigator.vibrate(40);
-}
-
-function setN(i, s, val = 0x0E) {
-    dtn[i] = s;
-    const btn = document.getElementById('n'+i);
-    if(btn) btn.classList.toggle('n-act', s);
-    if(out) out.send([0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x08, i, s ? val : 0x40, 0xF7]);
-}
-
-function resS() { for(let i=0; i<12; i++) setN(i, false); }
-
-const notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const sg = document.getElementById('sgrid');
-notes.forEach((n,i) => {
-    const b = document.createElement('button');
-    b.id = 'n'+i; b.innerText = n;
-    b.onclick = () => applyMakam(i);
-    sg.appendChild(b);
-});
-
-function tab(id, el) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    el.classList.add('active');
-}
-
-function bend(v) { if(out) out.send([0xE0, v & 0x7F, (v >> 7) & 0x7F]); }
-function rPB() { document.getElementById('pb').value=8192; bend(8192); }
-setInterval(() => { document.getElementById('clock').innerText = new Date().toTimeString().split(' ')[0]; }, 1000);
-</script>
-</body>
-</html>
+    "hisar": [{
+    
