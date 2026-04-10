@@ -3,268 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Korg Pa1000 Ultimate Controller</title>
+    <title>Korg Pa1000 Ultimate Control v10</title>
     <style>
-        :root { 
-            --bg: #050505; --accent: #ff9800; --panel: #121212; 
-            --blue: #007bff; --green: #28a745; --red: #dc3545; --purple: #6f42c1;
-        }
-        body { 
-            font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; 
-            margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
-        }
+        :root { --bg: #050505; --accent: #ff9800; --panel: #121212; --blue: #007bff; --green: #28a745; --red: #dc3545; --purple: #6f42c1; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        /* Tabs */
+        /* Tabs Navigation */
         .tab-bar { display: flex; background: #111; border-bottom: 2px solid var(--accent); }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #555; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; color: #555; cursor: pointer; font-weight: bold; font-size: 10px; text-transform: uppercase; }
         .tab-btn.active { color: var(--accent); background: #1a1a1a; border-bottom: 3px solid var(--accent); }
-
+        
+        /* Layout Sections */
         .content { flex: 1; overflow-y: auto; padding: 10px; display: none; }
         .content.active { display: block; }
-
-        /* Panels */
         .panel { background: var(--panel); border-radius: 8px; padding: 10px; margin-bottom: 10px; border: 1px solid #222; }
+        
+        /* Grids */
         .grid { display: grid; gap: 6px; }
         .grid-4 { grid-template-columns: repeat(4, 1fr); }
         .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        
         .section-label { font-size: 9px; color: #666; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: 1px; }
-
-        button { 
-            background: #252525; border: 1px solid #333; color: white; padding: 12px 5px; 
-            border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 10px; text-transform: uppercase; 
-        }
+        
+        /* Buttons Styling */
+        button { background: #252525; border: 1px solid #333; color: white; padding: 12px 5px; border-radius: 4px; font-weight: bold; font-size: 10px; text-transform: uppercase; cursor: pointer; transition: 0.1s; }
         button:active { background: var(--accent) !important; color: black !important; }
-
+        .pad-btn.active { background: var(--purple) !important; box-shadow: 0 0 15px var(--purple); border-color: white; }
+        .toggle-btn.active { background: var(--blue) !important; border-color: white; }
+        
+        /* Search & Lists */
+        .search-box { width: 100%; padding: 12px; background: black; color: white; border: 1px solid #444; border-radius: 5px; box-sizing: border-box; font-size: 14px; margin-top: 5px; }
+        .list-container { max-height: 140px; overflow-y: auto; background: #000; border: 1px solid #333; border-radius: 5px; margin-top: 10px; }
+        .list-item { padding: 12px; border-bottom: 1px solid #222; font-size: 13px; cursor: pointer; }
+        
         /* Sliders */
         .perf-footer { background: #000; padding: 10px; border-top: 1px solid #333; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .slider-box { display: flex; flex-direction: column; align-items: center; }
         .h-slider { width: 100%; height: 35px; accent-color: var(--accent); }
-        .label { font-size: 9px; color: #666; margin-bottom: 4px; }
-
-        /* Scales */
-        .note-btn { height: 55px; background: #1a1a1a; font-size: 14px; }
-        .note-btn.active { background: var(--blue); border-color: white; box-shadow: 0 0 10px var(--blue); }
+        .slider-label { font-size: 8px; color: #666; text-align: center; display: block; }
         
-        .search-box { width: 100%; padding: 12px; background: black; color: white; border: 1px solid #444; border-radius: 5px; box-sizing: border-box; }
+        /* Scale Notes */
+        .note-btn { height: 45px; font-size: 12px; }
+        .note-btn.active { background: var(--blue) !important; box-shadow: 0 0 10px var(--blue); }
     </style>
 </head>
 <body>
 
 <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('live')">LIVE CONTROL</button>
-    <button class="tab-btn" onclick="showTab('mixer')">SCALES & ISON</button>
+    <button class="tab-btn active" onclick="showTab('live')">LIVE & BANKS</button>
+    <button class="tab-btn" onclick="showTab('mixer')">SCALES & MASTERING</button>
     <button class="tab-btn" onclick="showTab('auto')">AUTOMATOR</button>
 </div>
 
 <div id="live" class="content active">
-    <div class="panel grid grid-3">
-        <button onclick="recordAction(()=>sendCC(80,127), {type:'CC', num:80, val:127}); setTimeout(()=>sendCC(80,0),200)">SW 1</button>
-        <button onclick="recordAction(()=>sendCC(81,127), {type:'CC', num:81, val:127}); setTimeout(()=>sendCC(81,0),200)">SW 2</button>
-        <button onclick="recordAction(()=>sendCC(82,127), {type:'CC', num:82, val:127}); setTimeout(()=>sendCC(82,0),200)">SW 3</button>
+    
+    <div class="panel">
+        <div class="section-label">DATABASES (FACTORY/USER/DIRECT/SONGBOOK)</div>
+        <div class="grid grid-4">
+            <button onclick="document.getElementById('fFile').click()">FACTORY</button>
+            <button onclick="document.getElementById('uFile').click()">USER</button>
+            <button onclick="document.getElementById('dFile').click()">DIRECT</button>
+            <button onclick="document.getElementById('sFile').click()">SONGBOOK</button>
+        </div>
+        <input type="file" id="fFile" style="display:none" onchange="processFile(this, 'factory')">
+        <input type="file" id="uFile" style="display:none" onchange="processFile(this, 'user')">
+        <input type="file" id="dFile" style="display:none" onchange="processFile(this, 'direct')">
+        <input type="file" id="sFile" style="display:none" onchange="processFile(this, 'songbook')">
+        
+        <input type="text" id="masterSearch" class="search-box" placeholder="🔍 Αναζήτηση ρυθμού ή τραγουδιού...">
+        <div id="resultList" class="list-container"></div>
     </div>
 
     <div class="panel">
-        <div class="section-label">Intros & Break</div>
+        <div class="section-label">STYLE ELEMENTS</div>
         <div class="grid grid-4">
             <button onclick="recordAction(()=>sendCC(80,0), {type:'CC', num:80, val:0})">Intro 1</button>
             <button onclick="recordAction(()=>sendCC(80,1), {type:'CC', num:80, val:1})">Intro 2</button>
             <button onclick="recordAction(()=>sendCC(80,2), {type:'CC', num:80, val:2})">Intro 3</button>
             <button onclick="recordAction(()=>sendCC(80,11), {type:'CC', num:80, val:11})" style="background:var(--red)">BREAK</button>
-        </div>
+            
+            <button onclick="recordAction(()=>sendCC(80,3), {type:'CC', num:80, val:3})">Var 1</button>
+            <button onclick="recordAction(()=>sendCC(80,4), {type:'CC', num:80, val:4})">Var 2</button>
+            <button onclick="recordAction(()=>sendCC(80,5), {type:'CC', num:80, val:5})">Var 3</button>
+            <button onclick="recordAction(()=>sendCC(80,6), {type:'CC', num:80, val:6})">Var 4</button>
 
-        <div class="section-label">Variations</div>
-        <div class="grid grid-4">
-            <button onclick="recordAction(()=>sendCC(80,3), {type:'CC', num:80, val:3})" style="border-bottom: 2px solid var(--accent)">Var 1</button>
-            <button onclick="recordAction(()=>sendCC(80,4), {type:'CC', num:80, val:4})" style="border-bottom: 2px solid var(--accent)">Var 2</button>
-            <button onclick="recordAction(()=>sendCC(80,5), {type:'CC', num:80, val:5})" style="border-bottom: 2px solid var(--accent)">Var 3</button>
-            <button onclick="recordAction(()=>sendCC(80,6), {type:'CC', num:80, val:6})" style="border-bottom: 2px solid var(--accent)">Var 4</button>
-        </div>
-
-        <div class="section-label">Fills</div>
-        <div class="grid grid-4">
             <button onclick="recordAction(()=>sendCC(80,7), {type:'CC', num:80, val:7})" style="color:var(--green)">Fill 1</button>
             <button onclick="recordAction(()=>sendCC(80,8), {type:'CC', num:80, val:8})" style="color:var(--green)">Fill 2</button>
             <button onclick="recordAction(()=>sendCC(80,9), {type:'CC', num:80, val:9})" style="color:var(--green)">Fill 3</button>
             <button onclick="recordAction(()=>sendCC(80,10), {type:'CC', num:80, val:10})" style="color:var(--green)">Fill 4</button>
         </div>
+    </div>
 
-        <div class="section-label">Endings & Transport</div>
-        <div class="grid grid-4">
-            <button onclick="recordAction(()=>sendCC(80,12), {type:'CC', num:80, val:12})">End 1</button>
-            <button onclick="recordAction(()=>sendCC(80,13), {type:'CC', num:80, val:13})">End 2</button>
-            <button onclick="recordAction(()=>sendCC(80,14), {type:'CC', num:80, val:14})">End 3</button>
-            <button onclick="recordAction(()=>sendDirect(0xFC), {type:'Direct', val:0xFC})" style="background:var(--red)">STOP</button>
+    <div class="panel">
+        <div class="section-label">SMART PADS (TOGGLE) & DNC</div>
+        <div class="grid grid-4" style="margin-bottom:8px;">
+            <button id="pad1" class="pad-btn" onclick="togglePad(1, 4)">PAD 1</button>
+            <button id="pad2" class="pad-btn" onclick="togglePad(2, 5)">PAD 2</button>
+            <button id="pad3" class="pad-btn" onclick="togglePad(3, 6)">PAD 3</button>
+            <button id="pad4" class="pad-btn" onclick="togglePad(4, 7)">PAD 4</button>
         </div>
+        <div class="grid grid-3">
+            <button onmousedown="sendCC(80,127)" onmouseup="sendCC(80,0)">SW 1</button>
+            <button onmousedown="sendCC(81,127)" onmouseup="sendCC(81,0)">SW 2</button>
+            <button onmousedown="sendCC(82,127)" onmouseup="sendCC(82,0)">SW 3</button>
+        </div>
+        <button onclick="stopAllPads()" style="width:100%; margin-top:10px; background:#400;">STOP ALL PADS</button>
     </div>
 
     <div class="grid grid-2">
-        <button onclick="sendDirect(0xFA)" style="height:70px; background:var(--green); font-size:16px;">START</button>
-        <button onclick="sendCC(81,2)" style="height:70px; background:#444;">TAP TEMPO</button>
+        <button onclick="sendDirect(0xFA)" style="height:65px; background:var(--green); font-size:16px;">START</button>
+        <button onclick="sendDirect(0xFC)" style="height:65px; background:var(--red); font-size:16px;">STOP</button>
     </div>
 </div>
 
 <div id="mixer" class="content">
+    
     <div class="panel">
-        <div class="section-label">Scale Presets</div>
-        <select id="scaleSelect" class="search-box" style="margin-bottom:10px; color:var(--accent);">
-            <optgroup label=" / ">
-                <option value="rast"> (Rast)</option>
-                <option value="ousak"> (Ousak)</option>
-                <option value="hizaz"> (Hizaz)</option>
-                <option value="saba"> (Saba)</option>
-                <option value="houzam"> (Houzam)</option>
-                <option value="segiah"></option>
-            </optgroup>
-            <optgroup label=" / ">
-                <option value="bayati">BAYATI</option>
-                <option value="sikah">SIKAH</option>
-                <option value="neveser">NEVESER</option>
-                <option value="bestenigar">BESTENIGAR</option>
-            </optgroup>
-        </select>
-        <button onclick="applyScaleMode()" style="width:100%; background:var(--blue); padding:15px; margin-bottom:15px;">SET PRESET</button>
-        
+        <div class="section-label">BYZANTINE SCALES (SYSEX MOIRA)</div>
         <div id="scaleGrid" class="grid grid-4"></div>
-        <button onclick="resetScale()" style="width:100%; margin-top:15px; background:#333;">RESET ALL (0 CENTS)</button>
+        <button onclick="resetScale()" style="width:100%; margin-top:10px; background:#333;">RESET TO 0 CENTS</button>
     </div>
 
     <div class="panel">
-        <div class="section-label"> (Drone)</div>
+        <div class="section-label">PERFORMANCE & OCTAVE</div>
+        <div class="grid grid-3">
+            <button id="ensembleBtn" class="toggle-btn" onclick="toggleEnsemble()">ENSEMBLE</button>
+            <button onclick="sendCC(91, 127)">OCTAVE +</button>
+            <button onclick="sendCC(91, 0)">OCTAVE -</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="section-label">MASTER EQ PRESETS (GLOBAL)</div>
+        <div class="grid grid-4">
+            <button onclick="setMasterEQ('flat')">FLAT</button>
+            <button onclick="setMasterEQ('loudness')" style="color:var(--accent)">LOUD</button>
+            <button onclick="setMasterEQ('punch')" style="color:var(--green)">PUNCH</button>
+            <button onclick="setMasterEQ('smooth')" style="color:var(--blue)">SMOOTH</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="section-label">MASTER FX (REVERB & LIMITER)</div>
         <div class="grid grid-2">
-            <select id="isonNote" class="search-box">
-                <option value="48">C ()</option>
-                <option value="50">D ()</option>
-                <option value="52">E ()</option>
-                <option value="55">G ()</option>
-                <option value="57">A ()</option>
-            </select>
-            <button id="isonBtn" onclick="toggleIson()" style="background:var(--purple);"> ISON OFF</button>
+            <div>
+                <span class="slider-label">REVERB</span>
+                <input type="range" class="h-slider" min="0" max="127" value="64" oninput="sendCC(94, this.value)">
+            </div>
+            <div>
+                <span class="slider-label">LIMITER</span>
+                <input type="range" class="h-slider" min="0" max="127" value="105" oninput="sendCC(95, this.value)">
+            </div>
         </div>
     </div>
 </div>
 
 <div id="auto" class="content">
-    <div class="panel" style="border: 2px solid var(--green);">
-        <div class="section-label">Sequence Recorder</div>
+    <div class="panel" style="border:1px solid var(--green)">
+        <div class="section-label">LIVE AUTOMATOR (REC & PLAY)</div>
         <div class="grid grid-4">
-            <button id="recBtn" onclick="startRecording()" style="background:#400;"> REC</button>
-            <button onclick="stopRecording()"> STOP</button>
-            <button onclick="playSequence()" style="background:#040;"> PLAY</button>
-            <button onclick="saveToDevice()" style="background:var(--blue);">SAVE</button>
+            <button id="recBtn" onclick="startRecording()" style="background:#400">● REC</button>
+            <button onclick="stopRecording()">■ STOP</button>
+            <button onclick="playSequence()" style="background:#040">▶ PLAY</button>
+            <button onclick="saveToDevice()" style="background:var(--blue)">SAVE</button>
         </div>
-        <input type="text" id="seqName" placeholder=" ..." class="search-box" style="margin-top:10px;">
-        <select id="savedSeqs" class="search-box" style="margin-top:10px;" onchange="loadSequence(this.value)">
-            <option value="">--  --</option>
-        </select>
-    </div>
-
-    <div class="panel">
-        <div class="section-label">One-Touch Chords (Recording Enabled)</div>
-        <div class="grid grid-4">
-            <button onclick="recordAction(()=>playChord([57,60,64]), {type:'Chord', notes:[57,60,64]})">Am</button>
-            <button onclick="recordAction(()=>playChord([62,65,69]), {type:'Chord', notes:[62,65,69]})">Dm</button>
-            <button onclick="recordAction(()=>playChord([55,59,62]), {type:'Chord', notes:[55,59,62]})">G Maj</button>
-            <button onclick="recordAction(()=>playChord([60,64,67]), {type:'Chord', notes:[60,64,67]})">C Maj</button>
-            <button onclick="recordAction(()=>playChord([52,56,59]), {type:'Chord', notes:[52,56,59]})">E Maj</button>
-            <button onclick="recordAction(()=>playChord([53,57,60]), {type:'Chord', notes:[53,57,60]})">F Maj</button>
-            <button onclick="recordAction(()=>playChord([58,62,65]), {type:'Chord', notes:[58,62,65]})">Bb</button>
-            <button onclick="recordAction(()=>playChord([57,61,64]), {type:'Chord', notes:[57,61,64]})">A Maj</button>
-        </div>
+        <input type="text" id="seqName" placeholder="Όνομα τραγουδιού..." class="search-box" style="margin-top:10px;">
+        <select id="savedSeqs" class="search-box" style="margin-top:5px;" onchange="loadSequence(this.value)"></select>
     </div>
 </div>
 
 <div class="perf-footer">
-    <div class="slider-box">
-        <span class="label">PITCH BEND</span>
+    <div>
+        <span class="slider-label">PITCH BEND</span>
         <input type="range" id="pb" class="h-slider" min="0" max="16383" value="8192" oninput="sendPB(this.value)" onmouseup="resPB()" ontouchend="resPB()">
     </div>
-    <div class="slider-box">
-        <span class="label">EXPRESSION</span>
+    <div>
+        <span class="slider-label">EXPRESSION / VOL</span>
         <input type="range" class="h-slider" min="0" max="127" value="127" oninput="sendCC(11, this.value)">
     </div>
 </div>
 
 <script>
-let midiOut = null;
+let midiOut = null, padStates = [false,false,false,false,false], ensOn = false;
+let isRecording = false, currentSequence = [], startTime = 0, masterData = [];
 let detunedNotes = new Array(12).fill(false);
-let pending = null;
-let isRecording = false, currentSequence = [], startTime = 0, playbackTimeouts = [];
 
-const scales = { rast:[4,11], ousak:[1], hizaz:[1,5], saba:[1,4], houzam:[0,3,7], bayati:[1], sikah:[3,10], neveser:[6,8], bestenigar:[0,1,5,8] };
+// MIDI INIT
+navigator.requestMIDIAccess({sysex:true}).then(m => {
+    midiOut = Array.from(m.outputs.values())[0];
+    console.log("Connected to: " + midiOut.name);
+}).catch(err => alert("MIDI Error: Connect your Korg first!"));
 
-// MIDI
-navigator.requestMIDIAccess({sysex:true}).then(m => midiOut = Array.from(m.outputs.values())[0]);
-
+// MIDI CORE FUNCTIONS
 function sendCC(c,v) { if(midiOut) midiOut.send([0xB0, c, v]); }
 function sendDirect(b) { if(midiOut) midiOut.send([b]); }
 function sendPB(v) { if(midiOut) midiOut.send([0xE0, v & 0x7F, (v >> 7) & 0x7F]); }
 function resPB() { document.getElementById('pb').value=8192; sendPB(8192); }
 
-// Recording Logic
-function recordAction(actionFn, data) {
-    actionFn();
-    if(isRecording) {
-        currentSequence.push({ time: Date.now() - startTime, data: data });
+// PAD TOGGLES
+function togglePad(num, val) {
+    padStates[num] = !padStates[num];
+    const btn = document.getElementById('pad'+num);
+    if(padStates[num]) { 
+        sendCC(81, val); 
+        btn.classList.add('active'); 
+    } else { 
+        sendCC(81, 8); // Pad Stop
+        btn.classList.remove('active'); 
     }
+    if(isRecording) currentSequence.push({time: Date.now()-startTime, data:{type:'Pad', num:num, active:padStates[num], val:val}});
 }
 
+function stopAllPads() {
+    sendCC(81, 8);
+    padStates.fill(false);
+    document.querySelectorAll('.pad-btn').forEach(b => b.classList.remove('active'));
+}
+
+// ENSEMBLE & EQ
+function toggleEnsemble() {
+    ensOn = !ensOn;
+    sendCC(90, ensOn ? 127 : 0);
+    document.getElementById('ensembleBtn').classList.toggle('active', ensOn);
+}
+
+const eqSysex = {
+    flat: [0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x3E, 0x10, 0x00, 0xF7],
+    loudness: [0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x3E, 0x11, 0x01, 0xF7],
+    punch: [0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x3E, 0x12, 0x02, 0xF7],
+    smooth: [0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x3E, 0x13, 0x03, 0xF7]
+};
+function setMasterEQ(t) { if(midiOut) midiOut.send(eqSysex[t]); }
+
+// FILE PROCESSING
+function processFile(input, cat) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const lines = e.target.result.split('\n');
+        lines.forEach(line => {
+            const p = line.split(',');
+            if(p.length >= 4) masterData.push({name:p[0].trim(), msb:p[1].trim(), lsb:p[2].trim(), pc:p[3].trim(), cat:cat});
+        });
+        alert(cat.toUpperCase() + " LOADED!");
+    };
+    reader.readAsText(input.files[0]);
+}
+
+// SEARCH
+document.getElementById('masterSearch').oninput = function(e) {
+    const list = document.getElementById('resultList');
+    list.innerHTML = '';
+    const val = e.target.value.toLowerCase();
+    if(val.length < 2) return;
+    
+    masterData.filter(d => d.name.toLowerCase().includes(val)).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `<span style="color:var(--accent)">[${item.cat[0].toUpperCase()}]</span> ${item.name}`;
+        div.onclick = () => {
+            sendCC(0, item.msb); 
+            sendCC(32, item.lsb); 
+            if(midiOut) midiOut.send([0xC0, item.pc]);
+            if(isRecording) currentSequence.push({time: Date.now()-startTime, data:{type:'Bank', msb:item.msb, lsb:item.lsb, pc:item.pc}});
+            document.getElementById('masterSearch').value = item.name;
+            list.innerHTML = '';
+        };
+        list.appendChild(div);
+    });
+};
+
+// SCALES
+function setNote(i, s) {
+    detunedNotes[i] = s;
+    document.getElementById('n'+i).classList.toggle('active', s);
+    // Korg Sysex for Scale Tuning
+    if(midiOut) midiOut.send([0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x08, i, s?14:64, 0xF7]);
+}
+function resetScale() { detunedNotes.fill(false); for(let i=0; i<12; i++) setNote(i, false); }
+
+// AUTOMATOR LOGIC
+function recordAction(fn, data) { fn(); if(isRecording) currentSequence.push({time: Date.now()-startTime, data: data}); }
 function startRecording() { isRecording = true; currentSequence = []; startTime = Date.now(); document.getElementById('recBtn').style.background="red"; }
 function stopRecording() { isRecording = false; document.getElementById('recBtn').style.background="#400"; }
+
 function playSequence() {
-    playbackTimeouts.forEach(clearTimeout);
     currentSequence.forEach(e => {
-        let t = setTimeout(() => {
+        setTimeout(() => {
             if(e.data.type==='CC') sendCC(e.data.num, e.data.val);
-            if(e.data.type==='Direct') sendDirect(e.data.val);
-            if(e.data.type==='Chord') playChord(e.data.notes);
+            if(e.data.type==='Pad') togglePad(e.data.num, e.data.val);
+            if(e.data.type==='Bank') { sendCC(0, e.data.msb); sendCC(32, e.data.lsb); if(midiOut) midiOut.send([0xC0, e.data.pc]); }
         }, e.time);
-        playbackTimeouts.push(t);
     });
 }
 
 function saveToDevice() {
-    const n = document.getElementById('seqName').value || "Seq_" + Date.now();
-    localStorage.setItem('korg_'+n, JSON.stringify(currentSequence));
+    const name = document.getElementById('seqName').value || "Song_"+Date.now();
+    localStorage.setItem('korg_'+name, JSON.stringify(currentSequence));
     updateList();
+    alert("Saved!");
 }
-
 function updateList() {
     const s = document.getElementById('savedSeqs');
-    s.innerHTML = '<option value="">--  --</option>';
+    s.innerHTML = '<option>-- ΦΟΡΤΩΣΗ --</option>';
     for(let i=0; i<localStorage.length; i++) {
         let k = localStorage.key(i);
         if(k.startsWith('korg_')) s.innerHTML += `<option value="${k}">${k.replace('korg_','')}</option>`;
     }
 }
-
 function loadSequence(k) { if(k) currentSequence = JSON.parse(localStorage.getItem(k)); }
-
-// Scale & Ison
-function applyScaleMode() { pending = scales[document.getElementById('scaleSelect').value]; alert("  "); }
-function toggleNote(i) {
-    if(pending) { resetScale(); pending.forEach(o => setNote((i+o)%12, true)); pending = null; }
-    else setNote(i, !detunedNotes[i]);
-}
-function setNote(i, s) {
-    detunedNotes[i] = s;
-    document.getElementById('n'+i).classList.toggle('active', s);
-    if(midiOut) midiOut.send([0xF0, 0x42, 0x40, 0x00, 0x01, 0x05, 0x08, i, s?14:64, 0xF7]);
-}
-function resetScale() { detunedNotes.fill(false); for(let i=0; i<12; i++) setNote(i, false); }
-
-let isonOn = false;
-function toggleIson() {
-    const n = parseInt(document.getElementById('isonNote').value);
-    const b = document.getElementById('isonBtn');
-    isonOn = !isonOn;
-    if(midiOut) midiOut.send([isonOn?0x90:0x80, n, isonOn?80:0]);
-    b.innerText = isonOn ? " ISON ON" : " ISON OFF";
-    b.style.background = isonOn ? "var(--red)" : "var(--purple)";
-}
-
-function playChord(notes) {
-    notes.forEach(n => { if(midiOut) { midiOut.send([0x90, n, 90]); setTimeout(()=>midiOut.send([0x80, n, 0]), 150); }});
-}
 
 // UI
 function showTab(id) {
@@ -277,7 +323,7 @@ function showTab(id) {
 function init() {
     const g = document.getElementById('scaleGrid');
     ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'].forEach((n,i) => {
-        g.innerHTML += `<button id="n${i}" class="note-btn" onclick="toggleNote(${i})">${n}</button>`;
+        g.innerHTML += `<button id="n${i}" class="note-btn" onclick="setNote(${i}, !detunedNotes[${i}])">${n}</button>`;
     });
     updateList();
 }
