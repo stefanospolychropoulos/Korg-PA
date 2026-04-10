@@ -4,22 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="data:application/manifest+json,{'name':'TITAN_PRO','short_name':'TITAN','display':'standalone','background_color':'#000'}">
-    <title>Pa1000 TITAN CRASH-PROOF</title>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>TITAN Pa1000 UNIVERSAL</title>
     <style>
-        :root { --bg: #000; --accent: #00f2ff; --red: #ff1744; --panel: #0a0a0a; }
+        :root { --bg: #000; --accent: #00f2ff; --red: #ff1744; --panel: #0d0d0d; --btn: #1a1a1a; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; user-select: none; }
-        body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Layout Structure */
-        .header { height: 12vh; display: flex; flex-direction: column; border-bottom: 1px solid #222; background: #050505; }
-        .info { height: 30%; display: flex; justify-content: space-between; padding: 0 10px; font-size: 9px; color: #444; align-items: center; }
-        .nav { height: 70%; display: flex; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            background: var(--bg); color: #fff; margin: 0; 
+            height: 100dvh; width: 100vw; overflow: hidden; 
+            display: flex; flex-direction: column; 
+        }
+
+        /* Top Bar */
+        .status-bar { height: 4dvh; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; font-size: 10px; color: #444; background: #000; }
+        #midi-led { width: 8px; height: 8px; border-radius: 50%; background: #200; display: inline-block; margin-right: 5px; }
+
+        /* Navigation */
+        .nav { height: 8dvh; display: flex; background: #050505; border-bottom: 1px solid #222; }
         .tab { flex: 1; border: none; background: none; color: #555; font-weight: 900; font-size: 11px; text-transform: uppercase; }
         .tab.active { color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); }
 
-        .main { flex: 1; position: relative; padding: 4px; display: flex; flex-direction: column; gap: 4px; }
-        .view { display: none; height: 100%; flex-direction: column; gap: 4px; }
+        /* Main Content */
+        .main { flex: 1; padding: 5px; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
+        .view { display: none; height: 100%; flex-direction: column; gap: 5px; }
         .view.active { display: flex; }
 
         .card { background: var(--panel); border: 1px solid #1a1a1a; border-radius: 8px; padding: 6px; }
@@ -27,40 +36,62 @@
         .g4 { grid-template-columns: repeat(4, 1fr); }
         .g3 { grid-template-columns: repeat(3, 1fr); }
 
-        /* Interaction Elements */
-        button { background: #151515; border: 1px solid #333; color: #fff; padding: 12px 2px; border-radius: 6px; font-weight: bold; font-size: 10px; }
+        button { background: var(--btn); border: 1px solid #333; color: #fff; padding: 12px 2px; border-radius: 6px; font-weight: bold; font-size: 10px; }
         button:active { background: var(--accent) !important; color: #000 !important; }
         .b-red { border-color: var(--red); color: var(--red); }
         .n-act { background: var(--accent) !important; color: #000; box-shadow: 0 0 12px var(--accent); }
 
-        /* Search Overlay - Crash Proof */
-        .search-area { position: relative; }
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid #333; border-radius: 6px; color: var(--accent); font-weight: bold; }
-        #res-box { position: absolute; width: 100%; max-height: 45vh; background: rgba(0,0,0,0.98); border: 1px solid var(--accent); z-index: 9999; overflow-y: auto; display: none; }
+        /* Search */
+        .search-wrap { position: relative; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #333; border-radius: 6px; color: var(--accent); font-weight: bold; font-size: 14px; }
+        #res-box { position: absolute; width: 100%; max-height: 40dvh; background: rgba(0,0,0,0.95); border: 1px solid var(--accent); z-index: 999; overflow-y: auto; display: none; }
         .res-item { padding: 12px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; }
 
-        /* Footer Sliders */
-        .footer { height: 16vh; background: #000; border-top: 1px solid #222; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
-        .slider-group { display: flex; flex-direction: column; justify-content: center; }
-        label { font-size: 8px; color: #555; text-transform: uppercase; margin-bottom: 2px; }
-        input[type=range] { width: 100%; height: 30px; accent-color: var(--accent); }
+        /* FOOTER: ΕΔΩ ΕΙΝΑΙ Η ΑΛΛΑΓΗ ΓΙΑ ΤΟ ΚΙΝΗΤΟ */
+        .footer { 
+            height: 25dvh; 
+            background: #000; 
+            border-top: 1px solid #333; 
+            padding: 8px; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; /* Default για Tablet */
+            gap: 10px; 
+        }
+
+        /* Αν η οθόνη είναι στενή (Κινητό) */
+        @media (max-width: 600px) {
+            .footer {
+                grid-template-columns: 1fr; /* Οι sliders μπαίνουν ο ένας κάτω από τον άλλο */
+                height: 30dvh; /* Περισσότερος χώρος στο κινητό */
+            }
+            button { padding: 15px 2px; font-size: 11px; } /* Μεγαλύτερα κουμπιά στο κινητό */
+        }
+
+        .slider-group { position: relative; display: flex; align-items: center; background: #0a0a0a; border-radius: 10px; border: 1px solid #222; }
         
-        #midi-led { width: 8px; height: 8px; border-radius: 50%; background: #200; display: inline-block; margin-right: 4px; }
+        input[type=range] { 
+            width: 100%; height: 100%; appearance: none; background: transparent; margin: 0; padding: 0 10px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            appearance: none; width: 45px; height: 45px; background: var(--accent); border-radius: 8px; box-shadow: 0 0 15px var(--accent);
+        }
+
+        .slider-label { position: absolute; left: 15px; pointer-events: none; font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.2); text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="info">
-        <div><span id="midi-led"></span> <span id="clock">00:00</span></div>
-        <div id="bat">BATTERY: --%</div>
-    </div>
-    <div class="nav">
-        <button class="tab active" onclick="tab('live')">ENGINE</button>
-        <button class="tab" onclick="tab('scale')">MAKAM</button>
-        <button class="tab" onclick="tab('auto')">AUTO</button>
-        <button class="tab b-red" onclick="panic()">PANIC</button>
-    </div>
+<div class="status-bar">
+    <div><span id="midi-led"></span> <span id="clock">00:00</span></div>
+    <div id="bat">BATT: --%</div>
+</div>
+
+<div class="nav">
+    <button class="tab active" onclick="tab('live')">ENGINE</button>
+    <button class="tab" onclick="tab('scale')">MAKAM</button>
+    <button class="tab" onclick="tab('auto')">AUTO</button>
+    <button class="tab b-red" onclick="panic()">PANIC</button>
 </div>
 
 <div class="main">
@@ -74,8 +105,8 @@
         <input type="file" id="f" hidden onchange="ld(this,'F')"><input type="file" id="u" hidden onchange="ld(this,'U')">
         <input type="file" id="d" hidden onchange="ld(this,'D')"><input type="file" id="s" hidden onchange="ld(this,'S')">
 
-        <div class="search-area">
-            <input type="text" id="sin" placeholder="SEARCH STYLE / VOICE..." autocomplete="off">
+        <div class="search-wrap">
+            <input type="text" id="sin" placeholder="SEARCH..." autocomplete="off">
             <div id="res-box"></div>
         </div>
 
@@ -93,44 +124,37 @@
     </div>
 
     <div id="scale" class="view">
-        <div class="card">
-            <select id="mkm" onchange="applyM(this.value)" style="width:100%; background:#000; color:var(--accent); padding:10px; border:1px solid #333;">
-                <option value="reset">NATURAL SCALE</option>
-                <option value="rast">RAST</option><option value="hitz">HITZAZ</option>
-                <option value="ous">USSAK</option><option value="sab">SABAH</option>
-            </select>
-        </div>
+        <div class="card"><select id="mkm" onchange="applyM(this.value)" style="width:100%; background:#000; color:var(--accent); padding:10px; border:1px solid #333;"><option value="reset">NATURAL</option><option value="rast">RAST</option><option value="hitz">HITZAZ</option><option value="ous">USSAK</option><option value="sab">SABAH</option></select></div>
         <div id="sgrid" class="card grid g4" style="flex:1"></div>
-        <button onclick="resS()" style="width:100%; height:45px;">RESET TUNING</button>
+        <button onclick="resS()" style="width:100%; height:50px;">RESET TUNING</button>
     </div>
 
     <div id="auto" class="view">
-        <div class="card grid g2">
-            <button id="rb" class="b-red" onclick="tRec()">REC</button>
-            <button onclick="play()">PLAY</button>
-        </div>
-        <input type="text" id="sn" placeholder="Save as..." style="margin:5px 0;">
+        <div class="card grid g2"><button id="rb" class="b-red" onclick="tRec()">REC</button><button onclick="play()">PLAY</button></div>
+        <input type="text" id="sn" placeholder="Save name..." style="margin:5px 0;">
         <div class="card" id="alist" style="flex:1; overflow-y:auto;"></div>
-        <button onclick="save()" style="width:100%; height:45px;">SAVE MACRO</button>
+        <button onclick="save()" style="width:100%; height:50px;">SAVE MACRO</button>
     </div>
 </div>
 
 <div class="footer">
-    <div class="slider-group"><label>Pitch</label><input type="range" id="pb" min="0" max="16383" value="8192" oninput="bend(this.value)" ontouchend="rPB()"></div>
-    <div class="slider-group"><label>Exp</label><input type="range" min="0" max="127" value="127" oninput="cc(11,this.value)"></div>
+    <div class="slider-group">
+        <span class="slider-label">Pitch Bend</span>
+        <input type="range" id="pb" min="0" max="16383" value="8192" oninput="bend(this.value)" ontouchend="rPB()">
+    </div>
+    <div class="slider-group">
+        <span class="slider-label">Expression</span>
+        <input type="range" min="0" max="127" value="127" oninput="cc(11,this.value)">
+    </div>
 </div>
 
 <script>
 let out = null, dtn = new Array(12).fill(false), db = [], rec = false, seq = [], st = 0;
 
-// MIDI Engine with Error Handling
-function initMIDI() {
-    if (!navigator.requestMIDIAccess) return alert("Browser not supported");
-    navigator.requestMIDIAccess({sysex:true}).then(m => {
-        out = Array.from(m.outputs.values())[0];
-        if(out) document.getElementById('midi-led').style.background = '#00f2ff';
-    }).catch(err => console.log("MIDI blocked"));
-}
+navigator.requestMIDIAccess({sysex:true}).then(m => {
+    out = Array.from(m.outputs.values())[0];
+    if(out) document.getElementById('midi-led').style.background = '#00f2ff';
+});
 
 function cc(c,v) { 
     if(out) out.send([0xB0, c, v]); 
@@ -146,17 +170,12 @@ function panic() {
     cc(80,10); v(50);
 }
 
-// System Monitors
-setInterval(() => {
-    document.getElementById('clock').innerText = new Date().toTimeString().split(' ')[0];
-}, 1000);
-
+setInterval(() => { document.getElementById('clock').innerText = new Date().toTimeString().split(' ')[0]; }, 1000);
 navigator.getBattery().then(b => {
-    const u = () => document.getElementById('bat').innerText = "POWER: " + Math.round(b.level * 100) + "%";
+    const u = () => document.getElementById('bat').innerText = "BAT: " + Math.round(b.level * 100) + "%";
     u(); b.onlevelchange = u;
 });
 
-// Tuning
 function setN(i, s) {
     dtn[i] = s;
     document.getElementById('n'+i).classList.toggle('n-act', s);
@@ -166,7 +185,6 @@ function resS() { for(let i=0; i<12; i++) setN(i, false); }
 const mkms = {"rast":[4,11],"hitz":[1,6],"ous":[4],"sab":[4,6,11]};
 function applyM(m) { resS(); if(mkms[m]) mkms[m].forEach(n => setN(n,true)); }
 
-// DB Search
 function ld(f, c) {
     const r = new FileReader();
     r.onload = (e) => {
@@ -181,10 +199,10 @@ function ld(f, c) {
 
 const sin = document.getElementById('sin'), res = document.getElementById('res-box');
 sin.oninput = function() {
-    const v = this.value.toLowerCase();
-    if(v.length < 2) { res.style.display='none'; return; }
+    const val = this.value.toLowerCase();
+    if(val.length < 2) { res.style.display='none'; return; }
     res.innerHTML = '';
-    const filtered = db.filter(x => x.n.toLowerCase().includes(v)).slice(0,30);
+    const filtered = db.filter(x => x.n.toLowerCase().includes(val)).slice(0,30);
     if(filtered.length > 0) {
         res.style.display = 'block';
         filtered.forEach(i => {
@@ -199,7 +217,6 @@ sin.oninput = function() {
     }
 };
 
-// Automator
 function tRec() { rec = !rec; document.getElementById('rb').innerText = rec ? "ON" : "REC"; if(rec) { seq=[]; st=Date.now(); } }
 function play() { seq.forEach(e => setTimeout(() => { if(out) out.send(e.d); }, e.t)); }
 function save() { localStorage.setItem('t_'+(document.getElementById('sn').value||Date.now()), JSON.stringify(seq)); upL(); }
@@ -222,7 +239,6 @@ function tab(id) {
     event.currentTarget.classList.add('active');
 }
 
-initMIDI();
 const g = document.getElementById('sgrid');
 ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'].forEach((n,i) => {
     g.innerHTML += `<button id="n${i}" onclick="setN(${i},!dtn[${i}])">${n}</button>`;
